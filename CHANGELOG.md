@@ -2,6 +2,55 @@
 
 All notable changes to `fnx-software/filament-astrotomic` will be documented in this file.
 
+## v1.2.0: Nested Relationship Support for Columns & Infolists - 2025-09-29
+
+### **Release Notes**
+
+This release significantly enhances the power and flexibility of the `TranslatableColumn` and `TranslatableEntry` components by adding full support for nested relationships. You can now display and search translated attributes from related models with the same simplicity as direct attributes.
+
+### 🚀 Enhancement: Full Nested Relationship Support
+
+Previously, these components could only work with attributes on the main resource's model (e.g., `'name'`). Attempting to use dot notation for a relationship (e.g., `'country.name'`) would not work as expected.
+
+With this update, you can now seamlessly use dot notation to access translated attributes on related models in both your tables and infolists.
+
+#### `TranslatableColumn` (Tables)
+
+The `TranslatableColumn` now correctly displays the translated attribute from a related model and, crucially, makes it searchable.
+
+**Example Usage:**
+
+```php
+use Fnxsoftware\FilamentAstrotomic\Tables\Columns\TranslatableColumn;
+
+// This now works perfectly for both display and search!
+TranslatableColumn::make('country.name')
+    ->label('Country')
+    ->searchable(), // Search is now relationship-aware!
+
+```
+#### `TranslatableEntry` (Infolists)
+
+The `TranslatableEntry` has been updated to mirror this functionality, allowing for effortless display of nested translated data on your view pages.
+
+**Example Usage:**
+
+```php
+use Fnxsoftware\FilamentAstrotomic\Infolists\Components\TranslatableEntry;
+
+// This now works seamlessly.
+TranslatableEntry::make('country.name')
+    ->label('Country'),
+
+```
+### How It Works
+
+* Both components now intelligently parse the name you provide.
+* If dot notation is detected, they will automatically traverse the Eloquent relationship to fetch the correct translated value based on the `LocaleSwitcher`.
+* The `TranslatableColumn`'s search functionality is also relationship-aware, automatically applying a `whereHas` constraint to properly filter your results.
+
+This update makes the components much more powerful and consistent, allowing you to build complex, multilingual views with cleaner code.
+
 ## v1.1.2 - 2025-09-29
 
 Fixes
@@ -36,6 +85,7 @@ use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
 ])
 
 
+
 ```
 **2. Set a dynamic locale using a Closure:**
 
@@ -48,6 +98,7 @@ use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
     FilamentAstrotomicPlugin::make()
         ->mainLocale(fn () => Setting::where('key', 'default_locale')->first()?->value ?? 'en')
 ])
+
 
 
 ```
@@ -79,6 +130,7 @@ protected function getHeaderActions(): array
 
 
 
+
 ```
 #### 2. `TranslatableColumn` for Tables
 
@@ -101,6 +153,7 @@ use Fnxsoftware\FilamentAstrotomic\Tables\Columns\TranslatableColumn;
 
 
 
+
 ```
 #### 3. `TranslatableEntry` for Infolists
 
@@ -114,6 +167,7 @@ use Fnxsoftware\FilamentAstrotomic\Infolists\Components\TranslatableEntry;
     TranslatableEntry::make('description'),
     // ...
 ])
+
 
 
 
