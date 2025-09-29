@@ -2,6 +2,10 @@
 
 All notable changes to `fnx-software/filament-astrotomic` will be documented in this file.
 
+## v1.1.2 - 2025-09-29
+
+Fixes
+
 ## v1.1.1 - Dynamic Main Locale Configuration - 2025-09-29
 
 ### **Release Notes**
@@ -31,6 +35,7 @@ use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
         ->mainLocale('ar')
 ])
 
+
 ```
 **2. Set a dynamic locale using a Closure:**
 
@@ -43,6 +48,7 @@ use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
     FilamentAstrotomicPlugin::make()
         ->mainLocale(fn () => Setting::where('key', 'default_locale')->first()?->value ?? 'en')
 ])
+
 
 ```
 If the `mainLocale()` method is not called, the plugin will fall back to the default behavior of reading from your configuration file, ensuring backward compatibility.
@@ -72,6 +78,7 @@ protected function getHeaderActions(): array
 }
 
 
+
 ```
 #### 2. `TranslatableColumn` for Tables
 
@@ -93,6 +100,7 @@ use Fnxsoftware\FilamentAstrotomic\Tables\Columns\TranslatableColumn;
 ])
 
 
+
 ```
 #### 3. `TranslatableEntry` for Infolists
 
@@ -106,6 +114,7 @@ use Fnxsoftware\FilamentAstrotomic\Infolists\Components\TranslatableEntry;
     TranslatableEntry::make('description'),
     // ...
 ])
+
 
 
 ```
