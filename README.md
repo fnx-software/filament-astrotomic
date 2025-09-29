@@ -291,13 +291,14 @@ Both `TranslatableColumn` and `TranslatableEntry` fully support displaying and s
 
 **`TranslatableColumn` with a relationship:**
 
-The column will display the country's name and the search input will correctly filter the `governorates` table based on the name of the related country.
+The column will display the country's name, and the search and sort functionality will correctly filter and order the `governorates` table based on the name of the related country.
 
 ```php
 // In your GovernorateResource table
 TranslatableColumn::make('country.name')
     ->label('Country')
-    ->searchable(),
+    ->searchable()
+    ->sortable(),
 ```
 
 **`TranslatableEntry` with a relationship:**
