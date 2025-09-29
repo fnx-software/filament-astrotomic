@@ -56,6 +56,68 @@ class TranslatableColumn extends TextColumn
             return $relatedRecord->getTranslation($locale, true)[$attributeName];
         });
     }
+    /**
+     * Override the sortable() method to provide our own
+     * default sort logic for translatable fields.
+     */
+    public function sortable(
+        bool | Closure | array | string $condition = true,
+        ?Closure $query = null
+    ): static {
+        // Replicate the parent's logic to set the sortable condition
+        $this->isSortable = $condition;
+
+        // If a custom query is not provided, create our own.
+        if ($query === null) {
+            $this->sortQuery = function (Builder $query, string $direction) {
+                $fullName = $this->getName();
+
+                // --- HANDLE DIRECT ATTRIBUTES ---
+                if (! Str::contains($fullName, '.')) {
+                    return $query->orderByTranslation($fullName, $direction);
+                }
+
+                // --- HANDLE NESTED BelongsTo RELATIONSHIPS ---
+                $relationshipPath = Str::beforeLast($fullName, '.');
+                $attributeName = Str::afterLast($fullName, '.');
+
+                /** @var Model $model */
+                $model = $query->getModel();
+
+                // This implementation supports single-level BelongsTo relationships.
+                if (! (method_exists($model, $relationshipPath) && $model->{$relationshipPath}() instanceof \Illuminate\Database\Eloquent\Relations\BelongsTo)) {
+                    return $query; // Silently fail if not a supported relationship
+                }
+
+                /** @var \Illuminate\Database\Eloquent\Relations\BelongsTo $relationship */
+                $relationship = $model->{$relationshipPath}();
+
+                /** @var Model&\Astrotomic\Translatable\Contracts\Translatable $relatedModel */
+                $relatedModel = $relationship->getRelated();
+
+                $relatedTable = $relatedModel->getTable();
+                $ownerKey = $relationship->getOwnerKeyName();
+                $foreignKey = $relationship->getForeignKeyName();
+
+                $translationTable = $relatedModel->getTranslationsTable();
+                $translationForeignKey = $relatedModel->getForeignKey();
+
+                $query
+                    ->leftJoin($relatedTable, "{$model->getTable()}.{$foreignKey}", '=', "{$relatedTable}.{$ownerKey}")
+                    ->leftJoin($translationTable, "{$relatedTable}.{$relatedModel->getKeyName()}", '=', "{$translationTable}.{$translationForeignKey}")
+                    ->where("{$translationTable}.locale", app()->getLocale())
+                    ->select("{$model->getTable()}.*") // Crucial to avoid pulling in conflicting columns
+                    ->orderBy("{$translationTable}.{$attributeName}", $direction)
+                    ->groupBy("{$model->getTable()}.{$model->getKeyName()}"); // Ensure unique results
+            };
+        } else {
+            // If the user provided their own query, use it.
+            $this->sortQuery = $query;
+        }
+
+        return $this;
+    }
+
 
     /**
      * We override the searchable() method to provide our own
