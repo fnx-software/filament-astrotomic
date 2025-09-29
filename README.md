@@ -1,8 +1,12 @@
-# Filament Astrotomic
+# Filament Astrotomic Translations
 
-This package is an extension for [Filament](https://filamentphp.com) and [laravel-translatable](https://docs.astrotomic.info/laravel-translatable).
+[![Total Downloads](https://img.shields.io/packagist/dt/fnx-software/filament-astrotomic)](https://packagist.org/packages/fnx-software/filament-astrotomic)
 
-> This package is a copy of [cactus-galaxy/filament-astrotomic](https://github.com/CactusGalaxy/FilamentAstrotomic) for Filament 4. The original package is no longer maintained.
+This package is an extension for **Filament v4+** and [laravel-translatable](https://docs.astrotomic.info/laravel-translatable) to easily manage multilingual content in your admin panel.
+
+This is an enhanced fork of [doriiaan/filament-astrotomic](https://github.com/Doriiaan/filament-astrotomic) and the original [cactus-galaxy/filament-astrotomic](https://github.com/CactusGalaxy/FilamentAstrotomic), updated for Filament 4 and introducing powerful new features like a reactive `LocaleSwitcher` and dedicated components for displaying translated content.
+
+<img width="3072" height="892" alt="CleanShot 2025-09-29 at 12 02 44@2x" src="https://github.com/user-attachments/assets/a2ef2b14-db7b-4d99-8fc9-dd30ed81a4a7" />
 
 ## Installation
 
@@ -12,27 +16,33 @@ You can install the package via Composer:
 composer require fnx-software/filament-astrotomic
 ```
 
-Publish configs for [`astrotomic/laravel-translatable`](https://docs.astrotomic.info/laravel-translatable/installation#configuration) package:
+Publish the configuration for `astrotomic/laravel-translatable`:
 
 ```bash
 php artisan vendor:publish --tag="translatable"
 ```
 
-After this, you will have to configure the locales your app should use.
+Configure the locales your app should use in `config/translatable.php`:
 
 ```php
+// config/translatable.php
 'locales' => [
-    'uk',
     'en',
+    'es',
+    'fr',
 ],
 ```
 
-## Adding the plugin to a panel
+## Setup
 
-To add a plugin to a panel, you must include it in the configuration file using the `plugins()` method:
+### Adding the Plugin to a Panel
+
+Register the plugin in your Panel Provider:
 
 ```php
+// app/Providers/Filament/AdminPanelProvider.php
 use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
+use Filament\Panel;
 
 public function panel(Panel $panel): Panel
 {
@@ -44,19 +54,55 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-## Preparing your model class
+### Customizing the Main Locale (Optional)
 
-You need to make your model translatable. You can read how to do this in [documentation for Laravel translatable](https://docs.astrotomic.info/laravel-translatable/installation#models).
+By default, the main locale is taken from your `config/translatable.php` file. You can override this dynamically when registering the plugin.
 
-## Preparing your resource class
+**Set a static main locale:**
+```php
+FilamentAstrotomicPlugin::make()
+    ->mainLocale('ar')
+```
 
-You must apply the `ResourceTranslatable` trait to your resource class:
+**Set a dynamic main locale (e.g., from database settings):**
+```php
+use App\Models\Setting;
+
+FilamentAstrotomicPlugin::make()
+    ->mainLocale(fn () => Setting::where('key', 'default_locale')->first()?->value ?? 'en')
+```
+
+## Basic Usage
+
+### 1. Preparing Your Model
+
+Make your Eloquent model translatable as described in the [laravel-translatable documentation](https://docs.astrotomic.info/laravel-translatable/installation#models).
 
 ```php
+// app/Models/Post.php
+use Illuminate\Database\Eloquent\Model;
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
+use Astrotomic\Translatable\Translatable;
+
+class Post extends Model implements TranslatableContract
+{
+    use Translatable;
+
+    public array $translatedAttributes = ['title', 'content'];
+    protected $fillable = ['author_id'];
+}
+```
+
+### 2. Preparing Your Resource
+
+Apply the `ResourceTranslatable` trait to your Filament resource class:
+
+```php
+// app/Filament/Resources/PostResource.php
 use Fnxsoftware\FilamentAstrotomic\Resources\Concerns\ResourceTranslatable;
 use Filament\Resources\Resource;
 
-class CourseResource extends Resource
+class PostResource extends Resource
 {
     use ResourceTranslatable;
 
@@ -64,318 +110,99 @@ class CourseResource extends Resource
 }
 ```
 
-## Making resource pages translatable
+### 3. Making Resource Pages Translatable
 
-After [preparing your resource class](#preparing-your-resource-class), you must make each of your resource's pages translatable too.
-You can find your resource's pages in the `Pages` directory of each resource folder.
-To prepare a page, you must apply the corresponding `{Type}Translatable` trait to it:
+You must also apply the corresponding translatable trait to each of your resource's pages.
 
+**List Page:**
 ```php
+// app/Filament/Resources/PostResource/Pages/ListPosts.php
 use Fnxsoftware\FilamentAstrotomic\Resources\Pages\ListTranslatable;
 use Filament\Resources\Pages\ListRecords;
 
-class ListProducts extends ListRecords
+class ListPosts extends ListRecords
 {
     use ListTranslatable;
-
     // ...
 }
 ```
 
+**Create Page:**
 ```php
+// app/Filament/Resources/PostResource/Pages/CreatePost.php
 use Fnxsoftware\FilamentAstrotomic\Resources\Pages\CreateTranslatable;
 use Filament\Resources\Pages\CreateRecord;
 
-class CreateProduct extends CreateRecord
+class CreatePost extends CreateRecord
 {
     use CreateTranslatable;
-
     // ...
 }
 ```
 
+**Edit Page:**
 ```php
+// app/Filament/Resources/PostResource/Pages/EditPost.php
 use Fnxsoftware\FilamentAstrotomic\Resources\Pages\EditTranslatable;
 use Filament\Resources\Pages\EditRecord;
 
-class EditProduct extends EditRecord
+class EditPost extends EditRecord
 {
     use EditTranslatable;
-
     // ...
 }
 ```
 
-And if you have a `ViewRecord` page for your resource:
-
+**View Page:**
 ```php
+// app/Filament/Resources/PostResource/Pages/ViewPost.php
 use Fnxsoftware\FilamentAstrotomic\Resources\Pages\ViewTranslatable;
 use Filament\Resources\Pages\ViewRecord;
 
-class ViewProduct extends ViewRecord
+class ViewPost extends ViewRecord
 {
     use ViewTranslatable;
-
     // ...
 }
 ```
 
-### Setting the translatable locales for a particular resource
+## Form Fields with `TranslatableTabs`
 
-By default, the translatable locales loaded using [Astrotomic's Locales helper from method `all()`](https://docs.astrotomic.info/laravel-translatable/package/locales-helper#all)
-which returns all locales from the `translatable.locales` configuration.
-Alternatively, you can customize the translatable locales for a particular resource by overriding the `getTranslatableLocales()` method in your resource class:
+To manage translations in your forms, use the `TranslatableTabs` component. It automatically creates a tab for each locale.
 
 ```php
-use CactusGalaxy\FilamentAstrotomic\Resources\Concerns\ResourceTranslatable;
-use Filament\Resources\Resource;
-
-class CourseResource extends Resource
-{
-    use ResourceTranslatable;
-
-    // ...
-
-    public static function getTranslatableLocales(): array
-    {
-        return ['uk', 'en'];
-    }
-}
-```
-
-## Using locale tabs on the form
-
-`TranslatableTabs` extends the default [`Filament\Schemas\Components\Tabs`](https://filamentphp.com/docs/4.x/schemas/tabs) component and provides a way to create tab schema tabs for each locale.
-Within the `localeTabSchema` method, you can define the callback for schema for each tab.
-This callback will be called for each locale to generate scheme for tab.
-
-To accept the `TranslatableTab` instance as an argument to get the current locale you need to name argument as `$translatableTab` or use type hint, like in example bellow.
-
-Here is an example of how to use `TranslatableTabs` in the `CourseResource` form:
-
-```php
-<?php
-
-namespace App\Filament\Admin\Resources\Courses\Schemas;
-
-use Fnxsoftware\FilamentAstrotomic\Schemas\Components\TranslatableTabs;
-use Fnxsoftware\FilamentAstrotomic\TranslatableTab;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Schema;
-
-class CourseForm
-{
-    public static function configure(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                TranslatableTabs::make()
-                    ->localeTabSchema(fn (TranslatableTab $tab) => [
-                        TextInput::make($tab->makeName('title'))
-                            ->required(),
-                        Textarea::make($tab->makeName('content'))
-                            ->required($tab->isMainLocale())
-                    ])
-            ]);
-    }
-}
-```
-
-![translatable-tabs.png](art/translatable_tabs.png)
-
-With this code, you will get tabs for each locale with `name` field in each tab. `name` field will be **required** only for the **main locale**.
-
-By default `$tab->makeName('name')` uses array syntax for naming -`{$locale}.{$name}`, but you can change it by calling `makeNameUsing` on `TranslatableTabs`, for example, use [plain syntax](https://docs.astrotomic.info/laravel-translatable/usage/forms#request-as-plain-syntax):
-
-```php
-TranslatableTabs::make()
-    // plain syntax
-    ->makeNameUsing(fn (string $name, string $locale) => "{$name}:{$locale}")
-    // or use an alias
-    ->makeNameUsingPlainSyntax()
-    // ..
-```
-
-### Prepend or append tabs
-
-Sometimes you need to add tabs before or after the localized tabs. You can use the `prependTabs` and `appendTabs` methods for this:
-
-```php
-use Filament\Schemas\Components\Tabs\Tab;
-
-TranslatableTabs::make()
-    ->localeTabSchema(fn (TranslatableTab $tab) => [
-        TextInput::make($tab->makeName('title'))
-            ->required(),
-        Textarea::make($tab->makeName('content'))
-            ->required($tab->isMainLocale())
-    ])
-    ->prependTabs([
-        Tab::make('Tab before')
-    ])
-    ->appendTabs(fn () => [
-        Tab::make('Tab after')
-            ->schema([
-                // ...
-            ])
-        // ...
-    ])
-```
-
-![prepend_append_tabs.png](art/prepend_append_tabs.png)
-
-## Processing modal forms with translations
-
-If you want to use translations in modal forms, you need to make some changes, to correctly mutate and fill your form.
-
-### Edit table action
-
-For example, we have `CourseResource` but don't have an edit page.
-
-To process translations in the Edit action modal, you need to override the `mutateRecordDataUsing` method of the `EditAction` class in the resource class.
-
-And if you are using a Column with path `translation.*`, make sure to unset the `translation` relation from the record data before returning it, otherwise, the record data will be saved incorrectly.
-
-````php
-use App\Filament\Admin\Resources\Courses\CourseResource;
-use App\Models\Course;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-
-class CoursesTable
-{
-    public static function configure(Table $table): Table
-    {
-        return $table
-            ->columns([
-                TextColumn::make('translation.title'),
-            ])
-            ->filters([
-                //
-            ])
-            ->recordActions([
-                EditAction::make()->mutateRecordDataUsing(function (Course $record, array $data) {
-                    return CourseResource::mutateTranslatableData($record, $data);
-                })->mutateDataUsing(function (Course $record, array $data) {
-                    $record->unsetRelation('translation');
-
-                    return $data;
-                }),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
-    }
-}```
-
-### Select with modal options
-
-There is a more complex example with `Select` component.
-For example, we need to manage (create or edit) a category for the product.
-
-In the `CategoryResource` defined form with translatable fields.
-
-```php
-namespace App\Filament\Admin\Resources\Categories\Schemas;
-
 use Fnxsoftware\FilamentAstrotomic\Schemas\Components\TranslatableTabs;
 use Fnxsoftware\FilamentAstrotomic\TranslatableTab;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Schema;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Form;
 
-class CategoryForm
+public static function form(Form $form): Form
 {
-    public static function configure(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                TranslatableTabs::make()
-                    ->localeTabSchema(fn (TranslatableTab $tab) => [
-                        TextInput::make($tab->makeName('name'))
-                            ->required($tab->isMainLocale())
-                            ->maxLength(255),
-                    ]),
-            ]);
-    }
-}
-````
+    return $form->schema([
+        TranslatableTabs::make()
+            ->localeTabSchema(fn (TranslatableTab $tab) => [
+                TextInput::make($tab->makeName('title'))
+                    ->required($tab->isMainLocale()), // Required only for the main language
 
-Then in `CourseResource` we can use `Select` component with modal options. Note that we need to call the `fillEditOptionActionFormUsing` method and mutate record data
-
-```php
-namespace App\Filament\Admin\Resources\Courses\Schemas;
-
-use App\Filament\Admin\Resources\Categories\CategoryResource;
-use App\Filament\Admin\Resources\Categories\Schemas\CategoryForm;
-use App\Models\Category;
-use Filament\Forms\Components\Select;
-use Filament\Schemas\Schema;
-
-class CourseForm
-{
-    public static function configure(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                Select::make('category_id')
-                    ->required()
-                    ->native(false)
-                    ->searchable()
-                    ->options(
-                        Category::all()->pluck('name', 'id')
-                    )
-                    // Configure create action - https://filamentphp.com/docs/4.x/forms/select#creating-a-new-option-in-a-modal
-                    ->createOptionModalHeading('Create')
-                    ->createOptionForm(fn (Schema $schema) => CategoryForm::configure($schema))
-                    ->createOptionUsing(function (array $data) {
-                        $optionRecord = Category::create($data);
-
-                        return $optionRecord->id;
-                    })
-                    // Configure edit action - https://filamentphp.com/docs/4.x/forms/select#editing-the-selected-option-in-a-modal
-                    ->editOptionModalHeading('Edit')
-                    ->editOptionForm(fn (Schema $schema) => CategoryForm::configure($schema))
-                    ->fillEditOptionActionFormUsing(function (string $state) {
-                        if (!$state) {
-                            return [];
-                        }
-
-                        $optionRecord = Category::find($state);
-
-                        return CategoryResource::mutateTranslatableData($optionRecord, $optionRecord->attributesToArray());
-                    })
-                    ->updateOptionUsing(function (array $data, string $state) {
-                        $optionRecord = Category::find($state);
-
-                        $optionRecord->update($data);
-
-                        return $optionRecord->id;
-                    })
-            ]);
-    }
+                RichEditor::make($tab->makeName('content')),
+            ])
+    ]);
 }
 ```
+<img width="3072" height="892" alt="CleanShot 2025-09-29 at 12 03 33@2x" src="https://github.com/user-attachments/assets/15c1f035-4997-476f-b249-16da8c007e48" />
 
-![select_translatable.png](art/select_translatable.png)
 
-![select_create_translatable.png](art/select_create_translatable.png)
+## Displaying Translated Content Reactively
 
-## Displaying Translated Content
-
-To display translated content on your List and View pages, this package provides a `LocaleSwitcher` action and dedicated components that react to it.
+This package provides a seamless way to view translated content on your List and View pages using a `LocaleSwitcher` action that works with dedicated table columns and infolist entries.
 
 ### 1. Add the `LocaleSwitcher` Action
 
-First, add the `LocaleSwitcher` to your page's header actions. This allows users to select which language they want to view the content in.
+Add the `LocaleSwitcher` to the header actions of your List and View pages.
 
 ```php
-// In your List page (e.g., ListProducts.php)
+// In your List page (e.g., ListPosts.php)
 use Fnxsoftware\FilamentAstrotomic\Actions\LocaleSwitcher;
 use Filament\Actions\CreateAction;
 
@@ -383,87 +210,81 @@ protected function getHeaderActions(): array
 {
     return [
         CreateAction::make(),
-        LocaleSwitcher::make(),
+        LocaleSwitcher::make(), // Add this
     ];
 }
 ```
+<img width="3072" height="898" alt="CleanShot 2025-09-29 at 12 04 48@2x" src="https://github.com/user-attachments/assets/a59f0fa7-4709-483e-bda6-3e3a9604ad0b" />
 
-```php
-// In your View page (e.g., ViewProduct.php)
-use Fnxsoftware\FilamentAstrotomic\Actions\LocaleSwitcher;
-use Filament\Actions\EditAction;
-
-protected function getHeaderActions(): array
-{
-    return [
-        EditAction::make(),
-        LocaleSwitcher::make(),
-    ];
-}
-```
 
 ### 2. Use `TranslatableColumn` in Tables
 
-Instead of manually configuring a `TextColumn` for translations, you can now use the `TranslatableColumn`. It automatically handles displaying the translation for the selected locale from the `LocaleSwitcher` and comes with built-in search functionality.
-
-Simply replace `TextColumn` with `TranslatableColumn` for your translated attributes.
+The `TranslatableColumn` automatically displays the translation for the selected locale and provides out-of-the-box search functionality.
 
 ```php
-<?php
-
-namespace App\Filament\Admin\Resources\Courses\Tables;
-
+// In your Table definition
 use Fnxsoftware\FilamentAstrotomic\Tables\Columns\TranslatableColumn;
 use Filament\Tables\Table;
 
-class CoursesTable
+public static function table(Table $table): Table
 {
-    public static function configure(Table $table): Table
-    {
-        return $table
-            ->columns([
-                // Use TranslatableColumn for translated fields
-                TranslatableColumn::make('title')
-                    ->searchable() // Search is handled automatically
-                    ->sortable(),
-
-                // Other columns...
-            ]);
-    }
+    return $table
+        ->columns([
+            TranslatableColumn::make('title')
+                ->searchable()
+                ->sortable(),
+            // ... other columns
+        ]);
 }
 ```
 
 ### 3. Use `TranslatableEntry` in Infolists
 
-Similarly, for View pages, use the `TranslatableEntry` in your infolist schema. It will automatically display the correct translation based on the `LocaleSwitcher`'s selection.
+Similarly, use `TranslatableEntry` in your infolists to display translated content that reacts to the `LocaleSwitcher`.
 
 ```php
-<?php
-
-namespace App\Filament\Admin\Resources\Courses\Schemas;
-
+// In your Infolist definition
 use Fnxsoftware\FilamentAstrotomic\Infolists\Components\TranslatableEntry;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Schemas\Schema;
+use Filament\Infolists\Infolist;
 
-class CourseInfolist
+public static function infolist(Infolist $infolist): Infolist
 {
-    public static function configure(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                // Use TranslatableEntry for translated fields
-                TranslatableEntry::make('title'),
-                TranslatableEntry::make('content'),
-
-                // Other entries...
-                TextEntry::make('created_at')->dateTime(),
-            ]);
-    }
+    return $infolist
+        ->schema([
+            TranslatableEntry::make('title'),
+            TranslatableEntry::make('content'),
+            // ... other entries
+        ]);
 }
 ```
 
-By using these components, you get a fully reactive and searchable interface for your translated content with minimal configuration.
+## Advanced Usage
+
+### Custom Locales Per-Resource
+
+Override the `getTranslatableLocales()` method in your resource to specify a different set of locales than the global configuration.
+
+```php
+public static function getTranslatableLocales(): array
+{
+    return ['en', 'fr'];
+}
+```
+
+### Modal Forms
+
+To use translatable fields inside modal actions (like an `EditAction` on a table row), you must correctly mutate the data.
+
+```php
+use App\Models\Post;
+use Filament\Tables\Actions\EditAction;
+
+->actions([
+    EditAction::make()->mutateRecordDataUsing(function (Post $record, array $data) {
+        return static::mutateTranslatableData($record, $data);
+    }),
+])
+```
 
 ## Testing
 
@@ -477,17 +298,14 @@ Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed re
 
 ## Contributing
 
-> Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
-
-## Security Vulnerabilities
-
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
+Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
 
 ## Credits
 
-- [Alary Dorian](https://github.com/fnx-software)
-- [Oleksandr Moik](https://github.com/oleksandr-moik)
-- [All Contributors](../../contributors)
+-   **Original Author:** [Oleksandr Moik (cactus-galaxy)](https://github.com/oleksandr-moik)
+-   **Filament v4 Fork:** [Alary Dorian (Doriiaan)](https://github.com/Doriiaan)
+-   **Current Maintainer:** [Fnx-Software](https://github.com/fnx-software)
+-   [All Contributors](../../contributors)
 
 ## License
 
