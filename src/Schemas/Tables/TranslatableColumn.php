@@ -56,6 +56,7 @@ class TranslatableColumn extends TextColumn
             return $relatedRecord->getTranslation($locale, true)[$attributeName];
         });
     }
+
     /**
      * Override the sortable() method to provide our own
      * default sort logic for translatable fields.
@@ -117,7 +118,6 @@ class TranslatableColumn extends TextColumn
 
         return $this;
     }
-
 
     /**
      * We override the searchable() method to provide our own
