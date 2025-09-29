@@ -18,19 +18,38 @@ class TranslatableColumn extends TextColumn
     {
         parent::setUp();
 
-        // Set the default display logic for the column's state.
+       // Set the default display logic for the column's state.
         $this->formatStateUsing(function (Model $record, $livewire): ?string {
-            $columnName = $this->getName();
+            $fullName = $this->getName(); // This will be 'country.name' or just 'name'
 
+            // Determine the locale to use from the LocaleSwitcher, with a fallback.
             $locale = property_exists($livewire, 'activeLocale') && $livewire->activeLocale
                 ? $livewire->activeLocale
                 : app()->getLocale();
 
-            if (! method_exists($record, 'getTranslation')) {
-                return $record->{$columnName};
+            // Check if we are dealing with a nested relationship
+            if (! Str::contains($fullName, '.')) {
+                // --- HANDLE DIRECT ATTRIBUTES ---
+                if (! method_exists($record, 'getTranslation')) {
+                    return $record->{$fullName};
+                }
+                return $record->getTranslation( $locale, true)[$fullName];
             }
 
-            return $record->getTranslation($locale, true)[$columnName];
+            // --- HANDLE NESTED RELATIONSHIPS ---
+            $relationshipPath = Str::beforeLast($fullName, '.'); // e.g., 'country'
+            $attributeName = Str::afterLast($fullName, '.');    // e.g., 'name'
+
+            // Safely retrieve the related model using the path.
+            $relatedRecord = data_get($record, $relationshipPath);
+
+            // Check if the related record exists and is a translatable model.
+            if (! $relatedRecord || ! method_exists($relatedRecord, 'getTranslation')) {
+                return null;
+            }
+
+            // Return the translation from the related model.
+            return $relatedRecord->getTranslation( $locale, true)[$attributeName];
         });
     }
 
@@ -45,8 +64,7 @@ class TranslatableColumn extends TextColumn
         bool $isIndividual = false,
         bool $isGlobal = true
     ): static {
-        // **MODIFICATION HERE: Replicate parent's logic for $condition**
-        if (is_bool($condition)) {
+           if (is_bool($condition)) {
             $this->isSearchable = $condition;
             $this->searchColumns = null;
         } else {
@@ -54,24 +72,33 @@ class TranslatableColumn extends TextColumn
             $this->searchColumns = Arr::wrap($condition);
         }
 
-        // If the developer has not provided a custom search query for the translation...
+        // If the developer has not provided a custom search query...
         if ($query === null) {
             // ...we will define our own default query.
             $query = function (Builder $query, string $search) {
-                $columnName = $this->getName();
+                $fullName = $this->getName();
 
-                return $query->whereTranslationLike($columnName, "%{$search}%");
+                // --- NEW SEARCH LOGIC ---
+
+                // If it's not a relationship, use the simple search.
+                if (! Str::contains($fullName, '.')) {
+                    return $query->whereTranslationLike($fullName, "%{$search}%");
+                }
+
+                // If it IS a relationship, use a `whereHas` query.
+                $relationshipPath = Str::beforeLast($fullName, '.');
+                $attributeName = Str::afterLast($fullName, '.');
+
+                return $query->whereHas($relationshipPath, function (Builder $q) use ($attributeName, $search) {
+                    $q->whereTranslationLike($attributeName, "%{$search}%");
+                });
             };
         }
 
-        // Apply our custom query or the one provided by the user
         $this->searchQuery = $query;
         $this->isGloballySearchable = $isGlobal;
         $this->isIndividuallySearchable = $isIndividual;
 
-        // **Important**: Do not call parent::searchable() directly anymore after replicating its logic.
-        // Instead, return $this to maintain method chaining, as the parent's logic is already
-        // applied by setting the internal properties.
         return $this;
     }
 }
