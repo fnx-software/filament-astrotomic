@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace Fnxsoftware\FilamentAstrotomic\Resources\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
-use Fnxsoftware\FilamentAstrotomic\Resources\Concerns\HasLocales;
 use Fnxsoftware\FilamentAstrotomic\Resources\Concerns\HasActiveLocaleSwitcher;
+use Fnxsoftware\FilamentAstrotomic\Resources\Concerns\HasLocales;
+
 /**
  * @mixin CreateRecord
  */
 trait CreateTranslatable
 {
-    use HasLocales;
     use HasActiveLocaleSwitcher;
+    use HasLocales;
 
     protected function fillForm(): void
     {
