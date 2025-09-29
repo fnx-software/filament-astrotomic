@@ -12,6 +12,9 @@ class FilamentAstrotomicPlugin implements Plugin
 {
     protected ?Closure $getLocaleLabelUsing = null;
 
+    // 1. Add a property to hold the custom main locale (string or Closure)
+    protected string | Closure | null $mainLocale = null;
+
     public function getId(): string
     {
         return 'filament-astrotomic';
@@ -43,6 +46,15 @@ class FilamentAstrotomicPlugin implements Plugin
     /**
      * Package specific functions
      */
+
+    // 2. Add the public "setter" method to allow configuration
+    public function mainLocale(string | Closure $locale): static
+    {
+        $this->mainLocale = $locale;
+
+        return $this;
+    }
+
     public function allLocales(): array
     {
         return app(Locales::class)->all();
@@ -50,6 +62,16 @@ class FilamentAstrotomicPlugin implements Plugin
 
     public function getMainLocale(): string
     {
+        // 3. Update getMainLocale() to use the custom property if it exists
+        if (isset($this->mainLocale)) {
+            // Evaluate the property, which executes the Closure if it is one,
+            // or returns the value if it's a simple string.
+            $locale = $this->mainLocale;
+
+            return $locale instanceof Closure ? $locale() : $locale;
+        }
+
+        // Fallback to the original behavior (get from config) if not set
         return app(Locales::class)->current();
     }
 
