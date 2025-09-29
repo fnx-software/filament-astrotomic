@@ -2,9 +2,9 @@
 
 namespace Fnxsoftware\FilamentAstrotomic\Resources\Concerns;
 
+use Filament\Support\Contracts\TranslatableContentDriver;
 use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicContentDriver;
 use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
-use Filament\Support\Contracts\TranslatableContentDriver;
 
 trait HasLocales
 {

@@ -3,10 +3,10 @@
 namespace Fnxsoftware\FilamentAstrotomic\Schemas\Components;
 
 use Closure;
-use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
-use Fnxsoftware\FilamentAstrotomic\TranslatableTab;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
+use Fnxsoftware\FilamentAstrotomic\TranslatableTab;
 
 class TranslatableTabs extends Tabs
 {
@@ -115,7 +115,7 @@ class TranslatableTabs extends Tabs
      * @param  array|callable():(array)  $tabs
      * @return $this
      */
-    public function prependTabs(array|callable $tabs = []): self
+    public function prependTabs(array | callable $tabs = []): self
     {
         $this->prependTabs = $this->evaluate($tabs);
 
@@ -128,7 +128,7 @@ class TranslatableTabs extends Tabs
      * @param  array|callable():(array)  $tabs
      * @return $this
      */
-    public function appendTabs(array|callable $tabs = []): self
+    public function appendTabs(array | callable $tabs = []): self
     {
         $this->appendTabs = $this->evaluate($tabs);
 

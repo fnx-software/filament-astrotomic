@@ -2,17 +2,15 @@
 
 namespace Fnxsoftware\FilamentAstrotomic\Resources\Pages;
 
-use Fnxsoftware\FilamentAstrotomic\Resources\Concerns\HasLocales;
-use Fnxsoftware\FilamentAstrotomic\Resources\Concerns\HasActiveLocaleSwitcher;
 use Filament\Resources\Pages\ListRecords;
+use Fnxsoftware\FilamentAstrotomic\Resources\Concerns\HasActiveLocaleSwitcher;
+use Fnxsoftware\FilamentAstrotomic\Resources\Concerns\HasLocales;
 
 /**
  * @mixin ListRecords
  */
 trait ListTranslatable
 {
-
-    use HasLocales;
     use HasActiveLocaleSwitcher;
-
+    use HasLocales;
 }

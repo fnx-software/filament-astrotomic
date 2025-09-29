@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Fnxsoftware\FilamentAstrotomic\Resources\Pages;
 
 use Astrotomic\Translatable\Contracts\Translatable;
+use Filament\Resources\Pages\ViewRecord;
 use Fnxsoftware\FilamentAstrotomic\Resources\Concerns\HasActiveLocaleSwitcher;
 use Fnxsoftware\FilamentAstrotomic\Resources\Concerns\HasLocales;
-use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -15,9 +15,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 trait ViewTranslatable
 {
-    use HasLocales;
     use HasActiveLocaleSwitcher;
-
+    use HasLocales;
 
     protected function fillForm(): void
     {

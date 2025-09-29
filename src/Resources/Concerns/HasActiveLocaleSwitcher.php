@@ -17,11 +17,12 @@ trait HasActiveLocaleSwitcher
 
     public function mountHasActiveLocaleSwitcher(): void
     {
-        $this->activeLocale=app()->getLocale();
+        $this->activeLocale = app()->getLocale();
     }
+
     public function updatedActiveLocale(string $newActiveLocale): void
     {
-        $this->activeLocale =$newActiveLocale;
+        $this->activeLocale = $newActiveLocale;
 
     }
 
@@ -29,5 +30,4 @@ trait HasActiveLocaleSwitcher
     {
         return $this->activeLocale;
     }
-
 }

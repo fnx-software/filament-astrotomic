@@ -2,7 +2,6 @@
 
 namespace Fnxsoftware\FilamentAstrotomic\Actions\Concerns;
 
-
 use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
 
 trait HasTranslatableLocaleOptions

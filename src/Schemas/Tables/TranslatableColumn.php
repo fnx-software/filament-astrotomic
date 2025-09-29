@@ -30,7 +30,7 @@ class TranslatableColumn extends TextColumn
                 return $record->{$columnName};
             }
 
-            return $record->getTranslation( $locale, true)[$columnName];
+            return $record->getTranslation($locale, true)[$columnName];
         });
     }
 
@@ -59,6 +59,7 @@ class TranslatableColumn extends TextColumn
             // ...we will define our own default query.
             $query = function (Builder $query, string $search) {
                 $columnName = $this->getName();
+
                 return $query->whereTranslationLike($columnName, "%{$search}%");
             };
         }
@@ -67,7 +68,6 @@ class TranslatableColumn extends TextColumn
         $this->searchQuery = $query;
         $this->isGloballySearchable = $isGlobal;
         $this->isIndividuallySearchable = $isIndividual;
-
 
         // **Important**: Do not call parent::searchable() directly anymore after replicating its logic.
         // Instead, return $this to maintain method chaining, as the parent's logic is already

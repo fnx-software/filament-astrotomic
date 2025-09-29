@@ -1,6 +1,7 @@
 <?php
 
 namespace Fnxsoftware\FilamentAstrotomic\Schemas\Infolists;
+
 use Filament\Infolists\Components\TextEntry;
 use Illuminate\Database\Eloquent\Model;
 

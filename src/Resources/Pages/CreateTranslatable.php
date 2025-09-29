@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Fnxsoftware\FilamentAstrotomic\Resources\Pages;
 
-use Fnxsoftware\FilamentAstrotomic\Resources\Concerns\HasLocales;
 use Filament\Resources\Pages\CreateRecord;
+use Fnxsoftware\FilamentAstrotomic\Resources\Concerns\HasLocales;
 
 /**
  * @mixin CreateRecord
