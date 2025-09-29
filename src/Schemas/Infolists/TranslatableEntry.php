@@ -33,8 +33,9 @@ class TranslatableEntry extends TextEntry
                 if (! method_exists($record, 'getTranslation')) {
                     return $record->{$fullName};
                 }
+
                 // The `false` parameter prevents fallback to the default locale
-                return $record->getTranslation( $locale, true)[$fullName];
+                return $record->getTranslation($locale, true)[$fullName];
             }
 
             // --- HANDLE NESTED RELATIONSHIPS ---
@@ -53,7 +54,7 @@ class TranslatableEntry extends TextEntry
             }
 
             // Return the translation from the related model.
-            return $relatedRecord->getTranslation( $locale, true)[$attributeName];
+            return $relatedRecord->getTranslation($locale, true)[$attributeName];
         });
     }
 }

@@ -18,7 +18,7 @@ class TranslatableColumn extends TextColumn
     {
         parent::setUp();
 
-       // Set the default display logic for the column's state.
+        // Set the default display logic for the column's state.
         $this->formatStateUsing(function (Model $record, $livewire): ?string {
             $fullName = $this->getName(); // This will be 'country.name' or just 'name'
 
@@ -33,7 +33,8 @@ class TranslatableColumn extends TextColumn
                 if (! method_exists($record, 'getTranslation')) {
                     return $record->{$fullName};
                 }
-                return $record->getTranslation( $locale, true)[$fullName];
+
+                return $record->getTranslation($locale, true)[$fullName];
             }
 
             // --- HANDLE NESTED RELATIONSHIPS ---
@@ -49,7 +50,7 @@ class TranslatableColumn extends TextColumn
             }
 
             // Return the translation from the related model.
-            return $relatedRecord->getTranslation( $locale, true)[$attributeName];
+            return $relatedRecord->getTranslation($locale, true)[$attributeName];
         });
     }
 
@@ -64,7 +65,7 @@ class TranslatableColumn extends TextColumn
         bool $isIndividual = false,
         bool $isGlobal = true
     ): static {
-           if (is_bool($condition)) {
+        if (is_bool($condition)) {
             $this->isSearchable = $condition;
             $this->searchColumns = null;
         } else {
