@@ -2,6 +2,10 @@
 
 All notable changes to `fnx-software/filament-astrotomic` will be documented in this file.
 
+## v1.2.1 - 2025-09-29
+
+Fixes
+
 ## v1.2.0: Nested Relationship Support for Columns & Infolists - 2025-09-29
 
 ### **Release Notes**
@@ -28,6 +32,7 @@ TranslatableColumn::make('country.name')
     ->label('Country')
     ->searchable(), // Search is now relationship-aware!
 
+
 ```
 #### `TranslatableEntry` (Infolists)
 
@@ -41,6 +46,7 @@ use Fnxsoftware\FilamentAstrotomic\Infolists\Components\TranslatableEntry;
 // This now works seamlessly.
 TranslatableEntry::make('country.name')
     ->label('Country'),
+
 
 ```
 ### How It Works
@@ -86,6 +92,7 @@ use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
 
 
 
+
 ```
 **2. Set a dynamic locale using a Closure:**
 
@@ -98,6 +105,7 @@ use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
     FilamentAstrotomicPlugin::make()
         ->mainLocale(fn () => Setting::where('key', 'default_locale')->first()?->value ?? 'en')
 ])
+
 
 
 
@@ -131,6 +139,7 @@ protected function getHeaderActions(): array
 
 
 
+
 ```
 #### 2. `TranslatableColumn` for Tables
 
@@ -154,6 +163,7 @@ use Fnxsoftware\FilamentAstrotomic\Tables\Columns\TranslatableColumn;
 
 
 
+
 ```
 #### 3. `TranslatableEntry` for Infolists
 
@@ -167,6 +177,7 @@ use Fnxsoftware\FilamentAstrotomic\Infolists\Components\TranslatableEntry;
     TranslatableEntry::make('description'),
     // ...
 ])
+
 
 
 
