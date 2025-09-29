@@ -1,6 +1,6 @@
 The MIT License (MIT)
 
-Copyright (c) Fenix Software <info@fenix-software.net>
+Copyright (c) Fenix Software <info@fenixsoftware.nett>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

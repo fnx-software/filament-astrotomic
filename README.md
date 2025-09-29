@@ -237,7 +237,7 @@ To process translations in the Edit action modal, you need to override the `muta
 
 And if you are using a Column with path `translation.*`, make sure to unset the `translation` relation from the record data before returning it, otherwise, the record data will be saved incorrectly.
 
-```php
+````php
 use App\Filament\Admin\Resources\Courses\CourseResource;
 use App\Models\Course;
 use Filament\Actions\BulkActionGroup;
@@ -272,8 +272,7 @@ class CoursesTable
                 ]),
             ]);
     }
-}
-```
+}```
 
 ### Select with modal options
 
@@ -305,7 +304,7 @@ class CategoryForm
             ]);
     }
 }
-```
+````
 
 Then in `CourseResource` we can use `Select` component with modal options. Note that we need to call the `fillEditOptionActionFormUsing` method and mutate record data
 
@@ -367,27 +366,54 @@ class CourseForm
 
 ![select_create_translatable.png](art/select_create_translatable.png)
 
-## Columns for translatable models on listings
+## Displaying Translated Content
 
-Out of the box, Filament supports nesting for columns, which means you can use `.` in the column path to access nested properties, and you don't need a special column for translatable models.
+To display translated content on your List and View pages, this package provides a `LocaleSwitcher` action and dedicated components that react to it.
+
+### 1. Add the `LocaleSwitcher` Action
+
+First, add the `LocaleSwitcher` to your page's header actions. This allows users to select which language they want to view the content in.
 
 ```php
-TextColumn::make('translation.name'),
+// In your List page (e.g., ListProducts.php)
+use Fnxsoftware\FilamentAstrotomic\Actions\LocaleSwitcher;
+use Filament\Actions\CreateAction;
+
+protected function getHeaderActions(): array
+{
+    return [
+        CreateAction::make(),
+        LocaleSwitcher::make(),
+    ];
+}
 ```
 
-**But** searching by translatable column is a bit more complicated. Simply overload searchable query like this.
+```php
+// In your View page (e.g., ViewProduct.php)
+use Fnxsoftware\FilamentAstrotomic\Actions\LocaleSwitcher;
+use Filament\Actions\EditAction;
 
-In addition, in Filament 4, Text columns can be arrays. To show only the first translations, use `->limitList(1)`.
+protected function getHeaderActions(): array
+{
+    return [
+        EditAction::make(),
+        LocaleSwitcher::make(),
+    ];
+}
+```
+
+### 2. Use `TranslatableColumn` in Tables
+
+Instead of manually configuring a `TextColumn` for translations, you can now use the `TranslatableColumn`. It automatically handles displaying the translation for the selected locale from the `LocaleSwitcher` and comes with built-in search functionality.
+
+Simply replace `TextColumn` with `TranslatableColumn` for your translated attributes.
 
 ```php
 <?php
 
 namespace App\Filament\Admin\Resources\Courses\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
+use Fnxsoftware\FilamentAstrotomic\Tables\Columns\TranslatableColumn;
 use Filament\Tables\Table;
 
 class CoursesTable
@@ -396,29 +422,48 @@ class CoursesTable
     {
         return $table
             ->columns([
-                TextColumn::make('translations.title')
-                    ->limitList(1)
-                    ->label('Title')
-                    ->searchable(query: function ($query, string $search) {
-                        $query->whereTranslationLike('title', '%'.$search.'%');
-                    }),
-            ])
-            ->filters([
-                //
-            ])
-            ->recordActions([
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                // Use TranslatableColumn for translated fields
+                TranslatableColumn::make('title')
+                    ->searchable() // Search is handled automatically
+                    ->sortable(),
+
+                // Other columns...
             ]);
     }
 }
 ```
 
-> Maybe in the feature someone will create a column for that 🙂, but currently you can use this code to configure your columns.
+### 3. Use `TranslatableEntry` in Infolists
+
+Similarly, for View pages, use the `TranslatableEntry` in your infolist schema. It will automatically display the correct translation based on the `LocaleSwitcher`'s selection.
+
+```php
+<?php
+
+namespace App\Filament\Admin\Resources\Courses\Schemas;
+
+use Fnxsoftware\FilamentAstrotomic\Infolists\Components\TranslatableEntry;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Schema;
+
+class CourseInfolist
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                // Use TranslatableEntry for translated fields
+                TranslatableEntry::make('title'),
+                TranslatableEntry::make('content'),
+
+                // Other entries...
+                TextEntry::make('created_at')->dateTime(),
+            ]);
+    }
+}
+```
+
+By using these components, you get a fully reactive and searchable interface for your translated content with minimal configuration.
 
 ## Testing
 
