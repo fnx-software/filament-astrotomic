@@ -9,6 +9,6 @@ use Filament\Resources\Resource;
  */
 trait ResourceTranslatable
 {
-    use HasLocales;
     use HasActiveLocaleSwitcher;
+    use HasLocales;
 }

@@ -30,8 +30,7 @@ Configure the locales your app should use in `config/translatable.php`:
     'en',
     'es',
     'fr',
-],
-```
+],```
 
 ## Setup
 
@@ -285,6 +284,32 @@ use Filament\Tables\Actions\EditAction;
     }),
 ])
 ```
+
+### Nested Relationship Support
+
+Both `TranslatableColumn` and `TranslatableEntry` fully support displaying and searching for translated attributes on nested relationships using dot notation.
+
+**`TranslatableColumn` with a relationship:**
+
+The column will display the country's name and the search input will correctly filter the `governorates` table based on the name of the related country.
+
+```php
+// In your GovernorateResource table
+TranslatableColumn::make('country.name')
+    ->label('Country')
+    ->searchable(),
+```
+
+**`TranslatableEntry` with a relationship:**
+
+The entry will display the translated name of the related country on the governorate's view page.
+
+```php
+// In your GovernorateResource infolist
+TranslatableEntry::make('country.name')
+    ->label('Country'),
+```
+
 
 ## Testing
 
