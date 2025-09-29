@@ -8,13 +8,14 @@ use Astrotomic\Translatable\Contracts\Translatable;
 use Filament\Resources\Pages\EditRecord;
 use Fnxsoftware\FilamentAstrotomic\Resources\Concerns\HasLocales;
 use Illuminate\Database\Eloquent\Model;
-
+use Fnxsoftware\FilamentAstrotomic\Resources\Concerns\HasActiveLocaleSwitcher;
 /**
  * @mixin EditRecord
  */
 trait EditTranslatable
 {
     use HasLocales;
+    use HasActiveLocaleSwitcher;
 
     protected function fillForm(): void
     {
