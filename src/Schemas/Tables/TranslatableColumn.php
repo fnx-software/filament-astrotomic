@@ -6,7 +6,10 @@ use Closure;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr; // Add this use statement for Arr::wrap
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+
+// Add this use statement for Arr::wrap
 
 class TranslatableColumn extends TextColumn
 {
