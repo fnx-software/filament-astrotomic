@@ -30,7 +30,8 @@ Configure the locales your app should use in `config/translatable.php`:
     'en',
     'es',
     'fr',
-],```
+],
+```
 
 ## Setup
 
@@ -165,9 +166,11 @@ class ViewPost extends ViewRecord
 }
 ```
 
-## Form Fields with `TranslatableTabs`
+## Form Components
 
-To manage translations in your forms, use the `TranslatableTabs` component. It automatically creates a tab for each locale.
+### `TranslatableTabs` for Localized Fields
+
+To manage translations for your model's attributes, use the `TranslatableTabs` component. It automatically creates a tab for each locale.
 
 ```php
 use Fnxsoftware\FilamentAstrotomic\Schemas\Components\TranslatableTabs;
@@ -190,6 +193,29 @@ public static function form(Form $form): Form
 }
 ```
 <img width="3072" height="892" alt="CleanShot 2025-09-29 at 12 03 33@2x" src="https://github.com/user-attachments/assets/15c1f035-4997-476f-b249-16da8c007e48" />
+
+### `TranslatableSelect` for Relationships
+
+The standard `Select::relationship()` component does not work with `astrotomic/laravel-translatable`. This package provides a `TranslatableSelect` component to correctly load, search, and display options from a translatable `BelongsTo` relationship.
+
+```php
+use Fnxsoftware\FilamentAstrotomic\Forms\Components\TranslatableSelect;
+use Filament\Forms\Form;
+
+public static function form(Form $form): Form
+{
+    return $form->schema([
+        // ... other fields
+        TranslatableSelect::make('country_id')
+            ->translatableRelationship('country', 'name')
+            ->searchable()
+            ->preload()
+            ->label('Country')
+            ->required(),
+    ]);
+}
+```
+This will correctly display the country names in the current locale, and the search functionality will also work on the translated names.
 
 
 ## Displaying Translated Content Reactively
@@ -218,7 +244,7 @@ protected function getHeaderActions(): array
 
 ### 2. Use `TranslatableColumn` in Tables
 
-The `TranslatableColumn` automatically displays the translation for the selected locale and provides out-of-the-box search functionality.
+The `TranslatableColumn` automatically displays the translation for the selected locale and provides out-of-the-box search and sort functionality.
 
 ```php
 // In your Table definition
@@ -287,7 +313,7 @@ use Filament\Tables\Actions\EditAction;
 
 ### Nested Relationship Support
 
-Both `TranslatableColumn` and `TranslatableEntry` fully support displaying and searching for translated attributes on nested relationships using dot notation.
+Both `TranslatableColumn` and `TranslatableEntry` fully support displaying, searching, and sorting translated attributes on nested relationships using dot notation.
 
 **`TranslatableColumn` with a relationship:**
 
