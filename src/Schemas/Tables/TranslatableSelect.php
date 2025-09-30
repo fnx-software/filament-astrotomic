@@ -12,10 +12,9 @@ class TranslatableSelect extends Select
     /**
      * Configures the component to work with an Astrotomic translatable relationship.
      *
-     * @param string $name The name of the relationship.
-     * @param string $titleAttribute The attribute on the translation model to use as the option label.
-     * @param Closure|null $modifyQueryUsing A closure to modify the query.
-     * @return static
+     * @param  string  $name  The name of the relationship.
+     * @param  string  $titleAttribute  The attribute on the translation model to use as the option label.
+     * @param  Closure|null  $modifyQueryUsing  A closure to modify the query.
      */
     public function translatableRelationship(string $name, string $titleAttribute, ?Closure $modifyQueryUsing = null): static
     {
@@ -23,7 +22,7 @@ class TranslatableSelect extends Select
         $this->relationship($name, $titleAttribute, $modifyQueryUsing);
 
         // Override the options logic to fetch translated options
-        $this->options(function () use ($name, $titleAttribute, $modifyQueryUsing) {
+        $this->options(function () use ($titleAttribute, $modifyQueryUsing) {
             $relationship = $this->getRelationship();
             /** @var Builder $query */
             $query = $relationship->getRelated()->query()->translatedIn(app()->getLocale());
@@ -39,12 +38,13 @@ class TranslatableSelect extends Select
                 ->mapWithKeys(function (Model $record) use ($titleAttribute) {
                     // Assuming the record has the Translatable trait
                     $translatedValue = $record->translate(app()->getLocale())?->{$titleAttribute};
+
                     return [$record->getKey() => $translatedValue];
                 });
         });
 
         // Override the search logic to search within translations
-        $this->getSearchResultsUsing(function (string $search) use ($name, $titleAttribute, $modifyQueryUsing): array {
+        $this->getSearchResultsUsing(function (string $search) use ($titleAttribute, $modifyQueryUsing): array {
             $relationship = $this->getRelationship();
             /** @var Builder $query */
             $query = $relationship->getRelated()->query();
@@ -63,6 +63,7 @@ class TranslatableSelect extends Select
                 ->get()
                 ->mapWithKeys(function (Model $record) use ($titleAttribute) {
                     $translatedValue = $record->translate(app()->getLocale())?->{$titleAttribute};
+
                     return [$record->getKey() => $translatedValue];
                 })
                 ->toArray();
@@ -71,6 +72,7 @@ class TranslatableSelect extends Select
         // Override the logic to get the label for the currently selected option
         $this->getOptionLabelUsing(function ($value) use ($titleAttribute): ?string {
             $record = $this->getRelationship()->getRelated()->find($value);
+
             return $record?->translate(app()->getLocale())?->{$titleAttribute};
         });
 
