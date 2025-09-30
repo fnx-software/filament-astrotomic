@@ -2,6 +2,49 @@
 
 All notable changes to `fnx-software/filament-astrotomic` will be documented in this file.
 
+## v1.2.3 - Translatable Relationship Select - 2025-09-30
+
+### **Release Notes**
+
+This release introduces a new, highly-requested form component to dramatically simplify working with translatable relationships: `TranslatableSelect`.
+
+### The Problem
+
+Previously, using a standard `Select` component for a `BelongsTo` relationship on a translatable model was cumbersome. Filament's `->relationship()` helper couldn't automatically find the translated attribute (e.g., `name`), forcing developers to write complex `->options()` and `->getSearchResultsUsing()` closures for every select input.
+
+### 🚀 New Feature: `TranslatableSelect` Component
+
+To solve this, we've added a new `TranslatableSelect` component with a dedicated `->translatableRelationship()` method. This brings the simplicity of Filament's built-in relationship helpers to your translatable models.
+
+The component automatically handles:
+
+- Loading relationship options with the correct translation for the current locale.
+- Searching through translated attributes.
+- Displaying the correct label for the selected option.
+
+**Example Usage:**
+
+Simply replace `Select` with `TranslatableSelect` and use the new method.
+
+```php
+use Fnxsoftware\FilamentAstrotomic\Forms\Components\TranslatableSelect;
+use Filament\Forms\Form;
+
+public static function form(Form $form): Form
+{
+    return $form->schema([
+        // ... other fields in your form
+        TranslatableSelect::make('country_id')
+            ->translatableRelationship('country', 'name') // The magic happens here!
+            ->searchable()
+            ->preload()
+            ->required(),
+    ]);
+}
+
+```
+This single line replaces complex custom logic, making your form code cleaner, more readable, and much easier to maintain. Enjoy the streamlined experience
+
 ## v1.2.1 - 2025-09-29
 
 Fixes
@@ -33,6 +76,7 @@ TranslatableColumn::make('country.name')
     ->searchable(), // Search is now relationship-aware!
 
 
+
 ```
 #### `TranslatableEntry` (Infolists)
 
@@ -46,6 +90,7 @@ use Fnxsoftware\FilamentAstrotomic\Infolists\Components\TranslatableEntry;
 // This now works seamlessly.
 TranslatableEntry::make('country.name')
     ->label('Country'),
+
 
 
 ```
@@ -93,6 +138,7 @@ use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
 
 
 
+
 ```
 **2. Set a dynamic locale using a Closure:**
 
@@ -105,6 +151,7 @@ use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
     FilamentAstrotomicPlugin::make()
         ->mainLocale(fn () => Setting::where('key', 'default_locale')->first()?->value ?? 'en')
 ])
+
 
 
 
@@ -140,6 +187,7 @@ protected function getHeaderActions(): array
 
 
 
+
 ```
 #### 2. `TranslatableColumn` for Tables
 
@@ -164,6 +212,7 @@ use Fnxsoftware\FilamentAstrotomic\Tables\Columns\TranslatableColumn;
 
 
 
+
 ```
 #### 3. `TranslatableEntry` for Infolists
 
@@ -177,6 +226,7 @@ use Fnxsoftware\FilamentAstrotomic\Infolists\Components\TranslatableEntry;
     TranslatableEntry::make('description'),
     // ...
 ])
+
 
 
 
