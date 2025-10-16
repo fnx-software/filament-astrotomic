@@ -2,6 +2,53 @@
 
 All notable changes to `fnx-software/filament-astrotomic` will be documented in this file.
 
+## V1.2.4 - Dynamic Field Label Helpers - 2025-10-16
+
+### 🎉 Announcing Release V1.2.4
+
+We're excited to announce the release of version 1.2.4 of the **Filament Astrotomic Translations** package! This release introduces a quality-of-life improvement for form development and includes documentation updates.
+
+### ✨ What's New in V1.2.4
+
+#### New: Dynamic Field Label Helpers
+
+To improve clarity in multi-language forms, we've added two new helper methods to the `TranslatableTab` class. You can now automatically prepend or append the current locale's name to your field labels, making the UI more intuitive for content editors.
+
+* `$tab->makePrefixLabel(string $name)`: Generates a label like `"Title (English)"`.
+* `$tab->makeSuffixLabel(string $name)`: Generates a label like `"(English) Title"`.
+
+**Example Usage:**
+
+```php
+use Fnxsoftware\FilamentAstrotomic\Schemas\Components\TranslatableTabs;
+use Fnxsoftware\FilamentAstrotomic\TranslatableTab;
+use Filament\Forms\Components\TextInput;
+
+TranslatableTabs::make()
+    ->localeTabSchema(fn (TranslatableTab $tab) => [
+        TextInput::make($tab->makeName('title'))
+            // Renders label as "Title (English)"
+            ->label($tab->makePrefixLabel('Title')),
+    ])
+
+```
+#### 📝 Documentation Updates
+
+The `README.md` has been updated to include detailed instructions and examples for the new label helper methods.
+
+### How to Update
+
+To upgrade to the latest version, run the following Composer command in your project's root directory:
+
+```bash
+composer update fnx-software/filament-astrotomic
+
+```
+
+---
+
+You can now create a new tag and release on your GitHub repository with this information. Congratulations on the new release
+
 ## v1.2.3 - Translatable Relationship Select - 2025-09-30
 
 ### **Release Notes**
@@ -42,6 +89,7 @@ public static function form(Form $form): Form
     ]);
 }
 
+
 ```
 This single line replaces complex custom logic, making your form code cleaner, more readable, and much easier to maintain. Enjoy the streamlined experience
 
@@ -77,6 +125,7 @@ TranslatableColumn::make('country.name')
 
 
 
+
 ```
 #### `TranslatableEntry` (Infolists)
 
@@ -90,6 +139,7 @@ use Fnxsoftware\FilamentAstrotomic\Infolists\Components\TranslatableEntry;
 // This now works seamlessly.
 TranslatableEntry::make('country.name')
     ->label('Country'),
+
 
 
 
@@ -139,6 +189,7 @@ use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
 
 
 
+
 ```
 **2. Set a dynamic locale using a Closure:**
 
@@ -151,6 +202,7 @@ use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
     FilamentAstrotomicPlugin::make()
         ->mainLocale(fn () => Setting::where('key', 'default_locale')->first()?->value ?? 'en')
 ])
+
 
 
 
@@ -188,6 +240,7 @@ protected function getHeaderActions(): array
 
 
 
+
 ```
 #### 2. `TranslatableColumn` for Tables
 
@@ -213,6 +266,7 @@ use Fnxsoftware\FilamentAstrotomic\Tables\Columns\TranslatableColumn;
 
 
 
+
 ```
 #### 3. `TranslatableEntry` for Infolists
 
@@ -226,6 +280,7 @@ use Fnxsoftware\FilamentAstrotomic\Infolists\Components\TranslatableEntry;
     TranslatableEntry::make('description'),
     // ...
 ])
+
 
 
 
