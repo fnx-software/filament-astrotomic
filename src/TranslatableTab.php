@@ -75,4 +75,23 @@ class TranslatableTab
     {
         $this->nameGenerator = $callback;
     }
+
+     /**
+     * Get the human-readable name of the tab's locale.
+     */
+    private function getDisplayLocaleName(): string
+    {
+        return locale_get_display_name($this->locale, app()->getLocale());
+    }
+
+    public function makePrefixLabel(string $name): string
+    {
+        return "{$name} ({$this->getDisplayLocaleName()})";
+    }
+
+    public function makeSuffixLabel(string $name): string
+    {
+        return "({$this->getDisplayLocaleName()}) {$name}";
+    }
+
 }
