@@ -137,8 +137,7 @@ class CreatePost extends CreateRecord
 {
     use CreateTranslatable;
     // ...
-}
-```
+}```
 
 **Edit Page:**
 ```php
@@ -194,6 +193,28 @@ public static function form(Form $form): Form
 ```
 <img width="3072" height="892" alt="CleanShot 2025-09-29 at 12 03 33@2x" src="https://github.com/user-attachments/assets/15c1f035-4997-476f-b249-16da8c007e48" />
 
+#### Customizing Field Labels
+
+To make it clearer which language a field belongs to, you can use the `makePrefixLabel()` and `makeSuffixLabel()` methods on the `TranslatableTab` object to automatically add the locale name to your field labels.
+
+```php
+use Fnxsoftware\FilamentAstrotomic\Schemas\Components\TranslatableTabs;
+use Fnxsoftware\FilamentAstrotomic\TranslatableTab;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+
+TranslatableTabs::make()
+    ->localeTabSchema(fn (TranslatableTab $tab) => [
+        TextInput::make($tab->makeName('title'))
+            // Renders label as "Title (English)"
+            ->label($tab->makePrefixLabel('Title')),
+
+        Textarea::make($tab->makeName('description'))
+            // Renders label as "(English) Description"
+            ->label($tab->makeSuffixLabel('Description')),
+    ])
+```
+
 ### `TranslatableSelect` for Relationships
 
 The standard `Select::relationship()` component does not work with `astrotomic/laravel-translatable`. This package provides a `TranslatableSelect` component to correctly load, search, and display options from a translatable `BelongsTo` relationship.
@@ -238,8 +259,7 @@ protected function getHeaderActions(): array
         LocaleSwitcher::make(), // Add this
     ];
 }
-```
-<img width="3072" height="898" alt="CleanShot 2025-09-29 at 12 04 48@2x" src="https://github.com/user-attachments/assets/a59f0fa7-4709-483e-bda6-3e3a9604ad0b" />
+```<img width="3072" height="898" alt="CleanShot 2025-09-29 at 12 04 48@2x" src="https://github.com/user-attachments/assets/a59f0fa7-4709-483e-bda6-3e3a9604ad0b" />
 
 
 ### 2. Use `TranslatableColumn` in Tables
