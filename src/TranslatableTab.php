@@ -76,7 +76,7 @@ class TranslatableTab
         $this->nameGenerator = $callback;
     }
 
-     /**
+    /**
      * Get the human-readable name of the tab's locale.
      */
     private function getDisplayLocaleName(): string
@@ -93,5 +93,4 @@ class TranslatableTab
     {
         return "({$this->getDisplayLocaleName()}) {$name}";
     }
-
 }
