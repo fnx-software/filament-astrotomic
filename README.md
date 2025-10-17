@@ -137,7 +137,8 @@ class CreatePost extends CreateRecord
 {
     use CreateTranslatable;
     // ...
-}```
+}
+```
 
 **Edit Page:**
 ```php
