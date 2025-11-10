@@ -260,7 +260,8 @@ protected function getHeaderActions(): array
         LocaleSwitcher::make(), // Add this
     ];
 }
-```<img width="3072" height="898" alt="CleanShot 2025-09-29 at 12 04 48@2x" src="https://github.com/user-attachments/assets/a59f0fa7-4709-483e-bda6-3e3a9604ad0b" />
+```
+<img width="3072" height="898" alt="CleanShot 2025-09-29 at 12 04 48@2x" src="https://github.com/user-attachments/assets/a59f0fa7-4709-483e-bda6-3e3a9604ad0b" />
 
 
 ### 2. Use `TranslatableColumn` in Tables
