@@ -26,10 +26,11 @@ class TranslatableTabs extends Tabs
      * Available custom locales of the application.
      */
     protected array $locales;
+
     /**
      * Available custom locales of the application.
      */
-    protected array $customLocales=[];
+    protected array $customLocales = [];
 
     /**
      * Main locale of the application.
@@ -135,7 +136,7 @@ class TranslatableTabs extends Tabs
         return $this;
     }
 
-    public function customLocales(array|callable $locales = []): self
+    public function customLocales(array | callable $locales = []): self
     {
         $this->customLocales = $this->evaluate($locales);
 
