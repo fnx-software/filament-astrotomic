@@ -13,7 +13,8 @@ class FilamentAstrotomicPlugin implements Plugin
     protected ?Closure $getLocaleLabelUsing = null;
 
     protected string | Closure | null $mainLocale = null;
-    protected array|Closure|null $locales = null;
+
+    protected array | Closure | null $locales = null;
 
     public function getId(): string
     {
@@ -46,7 +47,6 @@ class FilamentAstrotomicPlugin implements Plugin
     /**
      * Package specific functions
      */
-
     public function mainLocale(string | Closure $locale): static
     {
         $this->mainLocale = $locale;
@@ -60,7 +60,6 @@ class FilamentAstrotomicPlugin implements Plugin
 
         return $this;
     }
-
 
     public function allLocales(): array
     {
@@ -102,6 +101,7 @@ class FilamentAstrotomicPlugin implements Plugin
 
         return [];
     }
+
     public function getMainLocale(): string
     {
         if (isset($this->mainLocale)) {
