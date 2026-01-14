@@ -71,6 +71,17 @@ use App\Models\Setting;
 FilamentAstrotomicPlugin::make()
     ->mainLocale(fn () => Setting::where('key', 'default_locale')->first()?->value ?? 'en')
 ```
+### Customizing the Available Locales (Optional)
+
+By default, the available locales are loaded from your `config/translatable.php` file.
+
+You can override the locale list when registering the plugin, which is useful when your locales are stored in the database (e.g., per-tenant settings).
+
+**Set a static locales list:**
+```php
+FilamentAstrotomicPlugin::make()
+    ->locales(['ar', 'en', 'fr'])
+```
 
 ## Basic Usage
 
@@ -213,6 +224,24 @@ TranslatableTabs::make()
         Textarea::make($tab->makeName('description'))
             // Renders label as "(English) Description"
             ->label($tab->makeSuffixLabel('Description')),
+    ])
+```
+#### Custom Locales Per `TranslatableTabs` Instance
+
+By default, `TranslatableTabs` will use the locales configured for the plugin (or the `translatable.locales` config).
+
+If you need to override the locales for a specific form (or even for a single set of fields), you may pass a custom list directly to the component:
+
+```php
+use Fnxsoftware\FilamentAstrotomic\Schemas\Components\TranslatableTabs;
+use Fnxsoftware\FilamentAstrotomic\TranslatableTab;
+use Filament\Forms\Components\TextInput;
+
+TranslatableTabs::make()
+    ->customLocales(['ar', 'en', 'fr', 'pt'])
+    ->localeTabSchema(fn (TranslatableTab $tab) => [
+        TextInput::make($tab->makeName('label'))
+            ->required($tab->isMainLocale()),
     ])
 ```
 
