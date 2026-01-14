@@ -12,8 +12,8 @@ class FilamentAstrotomicPlugin implements Plugin
 {
     protected ?Closure $getLocaleLabelUsing = null;
 
-    // 1. Add a property to hold the custom main locale (string or Closure)
     protected string | Closure | null $mainLocale = null;
+    protected array|Closure|null $locales = null;
 
     public function getId(): string
     {
@@ -47,7 +47,6 @@ class FilamentAstrotomicPlugin implements Plugin
      * Package specific functions
      */
 
-    // 2. Add the public "setter" method to allow configuration
     public function mainLocale(string | Closure $locale): static
     {
         $this->mainLocale = $locale;
@@ -55,23 +54,62 @@ class FilamentAstrotomicPlugin implements Plugin
         return $this;
     }
 
+    public function locales(array | Closure $locales): static
+    {
+        $this->locales = $locales;
+
+        return $this;
+    }
+
+
     public function allLocales(): array
     {
         return app(Locales::class)->all();
     }
 
+    public function getLocales(): array
+    {
+        if ($this->locales === null) {
+            return app(Locales::class)->all();
+        }
+
+        $value = $this->locales instanceof Closure ? ($this->locales)() : $this->locales;
+
+        $list = $this->normalizeLocales($value);
+
+        $main = $this->getMainLocale();
+
+        return array_values(array_unique(array_merge([$main], $list)));
+    }
+
+    protected function normalizeLocales(mixed $value): array
+    {
+        if ($value instanceof Collection) {
+            $value = $value->all();
+        }
+
+        if (is_array($value)) {
+            return $value;
+        }
+        if (is_string($value)) {
+            $decoded = json_decode($value, true);
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+
+            return array_values(array_filter(array_map('trim', explode(',', $value))));
+        }
+
+        return [];
+    }
     public function getMainLocale(): string
     {
-        // 3. Update getMainLocale() to use the custom property if it exists
         if (isset($this->mainLocale)) {
-            // Evaluate the property, which executes the Closure if it is one,
-            // or returns the value if it's a simple string.
             $locale = $this->mainLocale;
 
             return $locale instanceof Closure ? $locale() : $locale;
         }
 
-        // Fallback to the original behavior (get from config) if not set
         return app(Locales::class)->current();
     }
 
