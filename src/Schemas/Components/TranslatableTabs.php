@@ -23,6 +23,15 @@ class TranslatableTabs extends Tabs
     protected array $availableLocales;
 
     /**
+     * Available custom locales of the application.
+     */
+    protected array $locales;
+    /**
+     * Available custom locales of the application.
+     */
+    protected array $customLocales=[];
+
+    /**
      * Main locale of the application.
      */
     protected string $mainLocale;
@@ -51,6 +60,7 @@ class TranslatableTabs extends Tabs
 
         $this->availableLocales = $plugin->allLocales();
         $this->mainLocale = $plugin->getMainLocale();
+        $this->locales = $plugin->getLocales();
 
         /**
          * Merge all tabs in the correct order.
@@ -87,7 +97,10 @@ class TranslatableTabs extends Tabs
      */
     public function localeTabSchema(callable $tabSchema): self
     {
-        $this->localeTabs = collect($this->availableLocales)
+        $languages = $this->customLocales
+            ?: (! empty($this->locales) ? $this->locales : $this->availableLocales);
+
+        $this->localeTabs = collect($languages)
             ->map(function (string $locale) use ($tabSchema) {
                 $tab = Tab::make($locale)
                     ->label($this->plugin->getLocaleLabel($locale));
@@ -118,6 +131,13 @@ class TranslatableTabs extends Tabs
     public function prependTabs(array | callable $tabs = []): self
     {
         $this->prependTabs = $this->evaluate($tabs);
+
+        return $this;
+    }
+
+    public function customLocales(array|callable $locales = []): self
+    {
+        $this->customLocales = $this->evaluate($locales);
 
         return $this;
     }
