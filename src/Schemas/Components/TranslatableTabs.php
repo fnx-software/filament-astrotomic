@@ -43,9 +43,9 @@ class TranslatableTabs extends Tabs
     protected array $prependTabs = [];
 
     /**
-     * Holds the localised tabs.
+     * Holds the schema callback for localised tabs.
      */
-    protected array $localeTabs = [];
+    protected ?Closure $localeTabSchema = null;
 
     /**
      * Holds the tabs that will be appended to the tabs.
@@ -65,10 +65,11 @@ class TranslatableTabs extends Tabs
 
         /**
          * Merge all tabs in the correct order.
+         * The closure ensures this is evaluated per-instance (crucial for Repeaters).
          */
         $this->tabs(fn () => [
             ...$this->prependTabs,
-            ...$this->localeTabs,
+            ...$this->getGeneratedLocaleTabs(),
             ...$this->appendTabs,
         ]);
     }
@@ -92,17 +93,31 @@ class TranslatableTabs extends Tabs
     }
 
     /**
-     * Generates the localised tabs with given schema for all available locales
+     * Stores the schema callback. Generation is deferred to getGeneratedLocaleTabs().
      *
      * @param  callable(TranslatableTab):(array<Component>|Closure)  $tabSchema
      */
     public function localeTabSchema(callable $tabSchema): self
     {
+        $this->localeTabSchema = $tabSchema;
+
+        return $this;
+    }
+
+    /**
+     * Internal method to generate tabs dynamically.
+     */
+    protected function getGeneratedLocaleTabs(): array
+    {
+        if (! $this->localeTabSchema) {
+            return [];
+        }
+
         $languages = $this->customLocales
             ?: (! empty($this->locales) ? $this->locales : $this->availableLocales);
 
-        $this->localeTabs = collect($languages)
-            ->map(function (string $locale) use ($tabSchema) {
+        return collect($languages)
+            ->map(function (string $locale) {
                 $tab = Tab::make($locale)
                     ->label($this->plugin->getLocaleLabel($locale));
 
@@ -110,8 +125,9 @@ class TranslatableTabs extends Tabs
 
                 $translatableTab->makeNameUsing($this->nameGenerator);
 
+                // Evaluate the stored schema callback
                 $schema = $this->evaluate(
-                    $tabSchema,
+                    $this->localeTabSchema,
                     namedInjections: ['translatableTab' => $translatableTab],
                     typedInjections: [TranslatableTab::class => $translatableTab],
                 );
@@ -119,8 +135,6 @@ class TranslatableTabs extends Tabs
                 return $tab->schema($schema);
             })
             ->all();
-
-        return $this;
     }
 
     /**
