@@ -12,45 +12,19 @@ class TranslatableTabs extends Tabs
 {
     protected FilamentAstrotomicPlugin $plugin;
 
-    /**
-     * Callback to generate the name of the tab.
-     */
     protected ?Closure $nameGenerator = null;
-
-    /**
-     * Available locales of the application.
-     */
     protected array $availableLocales;
-
-    /**
-     * Available custom locales of the application.
-     */
     protected array $locales;
-
-    /**
-     * Available custom locales of the application.
-     */
     protected array $customLocales = [];
-
-    /**
-     * Main locale of the application.
-     */
     protected string $mainLocale;
-
-    /**
-     * Holds the tabs that will be prepended to the tabs.
-     */
     protected array $prependTabs = [];
-
-    /**
-     * Holds the schema callback for localised tabs.
-     */
     protected ?Closure $localeTabSchema = null;
+    protected array $appendTabs = [];
 
     /**
-     * Holds the tabs that will be appended to the tabs.
+     * If true, tabs will be shown even if there is only one locale.
      */
-    protected array $appendTabs = [];
+    protected bool $isForced = false;
 
     protected function setUp(): void
     {
@@ -63,10 +37,6 @@ class TranslatableTabs extends Tabs
         $this->mainLocale = $plugin->getMainLocale();
         $this->locales = $plugin->getLocales();
 
-        /**
-         * Merge all tabs in the correct order.
-         * The closure ensures this is evaluated per-instance (crucial for Repeaters).
-         */
         $this->tabs(fn () => [
             ...$this->prependTabs,
             ...$this->getGeneratedLocaleTabs(),
@@ -74,29 +44,23 @@ class TranslatableTabs extends Tabs
         ]);
     }
 
-    /**
-     * Set the callback to generate the name of the tab.
-     *
-     * @param  Closure(string $name, string $locale):string|null  $callback
-     */
+    public function force(bool $condition = true): static
+    {
+        $this->isForced = $condition;
+
+        return $this;
+    }
+
     public function makeNameUsing(?Closure $callback): static
     {
         return $this->tap(fn () => $this->nameGenerator = $callback);
     }
 
-    /**
-     * Set the name of the tab using plain syntax `{$name}:{$locale}`.
-     */
     public function makeNameUsingPlainSyntax(): static
     {
         return $this->makeNameUsing(fn (string $name, string $locale) => "{$name}:{$locale}");
     }
 
-    /**
-     * Stores the schema callback. Generation is deferred to getGeneratedLocaleTabs().
-     *
-     * @param  callable(TranslatableTab):(array<Component>|Closure)  $tabSchema
-     */
     public function localeTabSchema(callable $tabSchema): self
     {
         $this->localeTabSchema = $tabSchema;
@@ -104,9 +68,6 @@ class TranslatableTabs extends Tabs
         return $this;
     }
 
-    /**
-     * Internal method to generate tabs dynamically.
-     */
     protected function getGeneratedLocaleTabs(): array
     {
         if (! $this->localeTabSchema) {
@@ -116,6 +77,36 @@ class TranslatableTabs extends Tabs
         $languages = $this->customLocales
             ?: (! empty($this->locales) ? $this->locales : $this->availableLocales);
 
+        $languagesList = is_array($languages) ? $languages : $languages->toArray();
+
+        // Check local force OR global plugin force
+        $shouldForce = $this->isForced || $this->plugin->isForced();
+
+        // --- SINGLE LOCALE LOGIC ---
+        if (count($languagesList) === 1 && ! $shouldForce) {
+            $locale = array_values($languagesList)[0];
+
+            // Switch to Grid view
+            $this->view('filament-schemas::components.grid');
+
+            $tab = Tab::make($locale)
+                ->label($this->plugin->getLocaleLabel($locale));
+
+            $translatableTab = new TranslatableTab($tab, $locale, $this->mainLocale);
+            $translatableTab->makeNameUsing($this->nameGenerator);
+
+            $schema = $this->evaluate(
+                $this->localeTabSchema,
+                namedInjections: ['translatableTab' => $translatableTab],
+                typedInjections: [TranslatableTab::class => $translatableTab],
+            );
+
+            $this->schema($schema);
+
+            return [];
+        }
+
+        // --- MULTI LOCALE LOGIC ---
         return collect($languages)
             ->map(function (string $locale) {
                 $tab = Tab::make($locale)
@@ -125,7 +116,6 @@ class TranslatableTabs extends Tabs
 
                 $translatableTab->makeNameUsing($this->nameGenerator);
 
-                // Evaluate the stored schema callback
                 $schema = $this->evaluate(
                     $this->localeTabSchema,
                     namedInjections: ['translatableTab' => $translatableTab],
@@ -137,12 +127,6 @@ class TranslatableTabs extends Tabs
             ->all();
     }
 
-    /**
-     * Prepends tabs before localised tabs.
-     *
-     * @param  array|callable():(array)  $tabs
-     * @return $this
-     */
     public function prependTabs(array | callable $tabs = []): self
     {
         $this->prependTabs = $this->evaluate($tabs);
@@ -157,12 +141,6 @@ class TranslatableTabs extends Tabs
         return $this;
     }
 
-    /**
-     * Appends tabs after localised tabs.
-     *
-     * @param  array|callable():(array)  $tabs
-     * @return $this
-     */
     public function appendTabs(array | callable $tabs = []): self
     {
         $this->appendTabs = $this->evaluate($tabs);
