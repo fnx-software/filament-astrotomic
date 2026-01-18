@@ -13,12 +13,19 @@ class TranslatableTabs extends Tabs
     protected FilamentAstrotomicPlugin $plugin;
 
     protected ?Closure $nameGenerator = null;
+
     protected array $availableLocales;
+
     protected array $locales;
+
     protected array $customLocales = [];
+
     protected string $mainLocale;
+
     protected array $prependTabs = [];
+
     protected ?Closure $localeTabSchema = null;
+
     protected array $appendTabs = [];
 
     /**
