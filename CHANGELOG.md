@@ -2,6 +2,39 @@
 
 All notable changes to `fnx-software/filament-astrotomic` will be documented in this file.
 
+## v1.2.7 - Smart Single-Locale Layouts & Force Configuration - 2026-01-18
+
+### ✨ What's New in V1.2.7
+
+**Features**
+
+* **Smart Single-Locale Display:**
+    `TranslatableTabs` now automatically detects if there is only **one** locale available. If so, it switches from a "Tabs" layout to a cleaner "Grid" layout, removing the redundant tab bar while maintaining the correct data structure.
+    
+* **Global & Local `force()` Configuration:**
+    Added the ability to force the "Tabs" layout to always appear, even if there is only one locale.
+    
+    **Global Usage (in Panel Provider):**
+    
+    ```php
+    FilamentAstrotomicPlugin::make()
+        ->force() // Always show tabs globally
+    
+    ```
+    **Local Usage (in Form Schema):**
+    
+    ```php
+    TranslatableTabs::make('translations')
+        ->force() // Always show tabs for this component
+    
+    ```
+
+**Improvements**
+
+* Refactored `TranslatableTabs` to dynamically switch views (`Tabs` vs `Grid`) based on the locale count and configuration.
+
+**Full Changelog**: https://github.com/fnx-software/filament-astrotomic/compare/v1.2.6...v1.2.7
+
 ## v1.2.6 -Fix  TranslatableTabs compatibility with Repeaters - 2026-01-15
 
 ### ✨ What's New in V1.2.6
@@ -35,6 +68,7 @@ FilamentAstrotomicPlugin::make()
     ->mainLocale(fn () => Filament::getTenant()?->locale_code ?? config('app.locale'));
 
 
+
 ```
 **2) Custom locales for a specific form section (TranslatableTabs)**
 
@@ -45,6 +79,7 @@ TranslatableTabs::make()
         TextInput::make($tab->makeName('label'))
             ->required($tab->isMainLocale()),
     ]);
+
 
 
 ```
@@ -84,6 +119,7 @@ TranslatableTabs::make()
 
 
 
+
 ```
 #### 📝 Documentation Updates
 
@@ -95,6 +131,7 @@ To upgrade to the latest version, run the following Composer command in your pro
 
 ```bash
 composer update fnx-software/filament-astrotomic
+
 
 
 
@@ -147,6 +184,7 @@ public static function form(Form $form): Form
 
 
 
+
 ```
 This single line replaces complex custom logic, making your form code cleaner, more readable, and much easier to maintain. Enjoy the streamlined experience
 
@@ -185,6 +223,7 @@ TranslatableColumn::make('country.name')
 
 
 
+
 ```
 #### `TranslatableEntry` (Infolists)
 
@@ -198,6 +237,7 @@ use Fnxsoftware\FilamentAstrotomic\Infolists\Components\TranslatableEntry;
 // This now works seamlessly.
 TranslatableEntry::make('country.name')
     ->label('Country'),
+
 
 
 
@@ -253,6 +293,7 @@ use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
 
 
 
+
 ```
 **2. Set a dynamic locale using a Closure:**
 
@@ -265,6 +306,7 @@ use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
     FilamentAstrotomicPlugin::make()
         ->mainLocale(fn () => Setting::where('key', 'default_locale')->first()?->value ?? 'en')
 ])
+
 
 
 
@@ -308,6 +350,7 @@ protected function getHeaderActions(): array
 
 
 
+
 ```
 #### 2. `TranslatableColumn` for Tables
 
@@ -336,6 +379,7 @@ use Fnxsoftware\FilamentAstrotomic\Tables\Columns\TranslatableColumn;
 
 
 
+
 ```
 #### 3. `TranslatableEntry` for Infolists
 
@@ -349,6 +393,7 @@ use Fnxsoftware\FilamentAstrotomic\Infolists\Components\TranslatableEntry;
     TranslatableEntry::make('description'),
     // ...
 ])
+
 
 
 
