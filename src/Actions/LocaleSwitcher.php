@@ -20,5 +20,10 @@ class LocaleSwitcher extends SelectAction
         $this->label(__('filament-spatie-laravel-translatable-plugin::actions.active_locale.label'));
 
         $this->setTranslatableLocaleOptions();
+
+        // HIDE if only 1 locale is available
+        $this->hidden(function () {
+            return count($this->getOptions()) <= 1;
+        });
     }
 }
