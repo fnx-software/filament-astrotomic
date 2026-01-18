@@ -334,6 +334,66 @@ public static function infolist(Infolist $infolist): Infolist
 }
 ```
 
+## 🚀 Single Locale Optimization & Customization
+
+### Automatic Grid View
+When your application or a specific tenant only has **one locale** active, `TranslatableTabs` will automatically switch its layout to a standard **Grid**.
+
+This removes the unnecessary tab bar, rendering the fields directly. This provides a cleaner UI for single-language contexts without requiring code changes.
+
+### Forcing Tabs Layout
+If you prefer to always show the language tabs (even when only one locale is available), you can force the layout using one of two methods:
+
+#### 1. Global Configuration
+Force tabs globally for all `TranslatableTabs` components in your `AdminPanelProvider`:
+
+```php
+use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->plugin(
+            FilamentAstrotomicPlugin::make()
+                ->force() // Always show tabs
+        );
+}
+```
+
+#### 2. Per-Component Configuration
+Force tabs on a specific component:
+
+```php
+use Fnxsoftware\FilamentAstrotomic\Schemas\Components\TranslatableTabs;
+
+TranslatableTabs::make('translations')
+    ->force() // Always show tabs for this specific component
+    ->localeTabSchema(fn (TranslatableTab $tab) => [
+        // ...
+    ])
+```
+
+---
+
+### Custom Locales for Switcher
+You can now define specific locales for the `LocaleSwitcher` action, overriding the global or tenant configurations. This is useful if specific resources or pages only support a subset of languages.
+
+```php
+use Fnxsoftware\FilamentAstrotomic\Actions\LocaleSwitcher;
+
+// Pass a list of locale codes (labels generated automatically)
+LocaleSwitcher::make()
+    ->locales(['en', 'fr']);
+
+// Or pass custom labels
+LocaleSwitcher::make()
+    ->locales([
+        'en' => 'English (US)',
+        'fr' => 'Français (France)',
+    ]);
+```
+
 ## Advanced Usage
 
 ### Custom Locales Per-Resource
