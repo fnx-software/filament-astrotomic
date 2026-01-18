@@ -40,7 +40,6 @@ trait HasTranslatableLocaleOptions
                 $rawLocales = $plugin->getLocales();
             }
 
-
             // 4. Format the options for the Select
             $options = [];
 
@@ -48,6 +47,7 @@ trait HasTranslatableLocaleOptions
                 // If the user provided ['en' => 'English Custom Label']
                 if (is_string($key) && ! is_numeric($key)) {
                     $options[$key] = $value;
+
                     continue;
                 }
 
