@@ -16,6 +16,12 @@ class FilamentAstrotomicPlugin implements Plugin
 
     protected array | Closure | null $locales = null;
 
+    /**
+     * If true, translatable components will always render tabs/switchers
+     * even if there is only one locale.
+     */
+    protected bool | Closure $isForced = false;
+
     public function getId(): string
     {
         return 'filament-astrotomic';
@@ -59,6 +65,22 @@ class FilamentAstrotomicPlugin implements Plugin
         $this->locales = $locales;
 
         return $this;
+    }
+
+    /**
+     * Force the display of translatable UI (tabs, switchers)
+     * even if there is only one locale available.
+     */
+    public function force(bool | Closure $condition = true): static
+    {
+        $this->isForced = $condition;
+
+        return $this;
+    }
+
+    public function isForced(): bool
+    {
+        return (bool) ($this->isForced instanceof Closure ? ($this->isForced)() : $this->isForced);
     }
 
     public function allLocales(): array
