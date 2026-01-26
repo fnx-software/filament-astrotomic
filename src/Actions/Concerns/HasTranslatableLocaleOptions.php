@@ -32,7 +32,7 @@ trait HasTranslatableLocaleOptions
             if ($this->customLocales !== null) {
                 $rawLocales = $this->evaluate($this->customLocales);
             }
-        
+
             // 3. Priority: Fallback to global Plugin locales (handles Tenant logic)
             // We check this if $rawLocales is still empty
             if (empty($rawLocales)) {
