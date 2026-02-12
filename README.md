@@ -2,7 +2,7 @@
 
 [![Total Downloads](https://img.shields.io/packagist/dt/fnx-software/filament-astrotomic)](https://packagist.org/packages/fnx-software/filament-astrotomic)
 
-This package is an extension for **Filament v4+** and [laravel-translatable](https://docs.astrotomic.info/laravel-translatable) to easily manage multilingual content in your admin panel.
+This package is an extension for **Filament v4 & 5** and [laravel-translatable](https://docs.astrotomic.info/laravel-translatable) to easily manage multilingual content in your admin panel.
 
 This is an enhanced fork of [doriiaan/filament-astrotomic](https://github.com/Doriiaan/filament-astrotomic) and the original [cactus-galaxy/filament-astrotomic](https://github.com/CactusGalaxy/FilamentAstrotomic), updated for Filament 4 and 5 and introducing powerful new features like a reactive `LocaleSwitcher` and dedicated components for displaying translated content.
 
