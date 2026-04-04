@@ -37,14 +37,14 @@ class FilamentAstrotomicServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'filament-astrotomic');
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'filament-astrotomic');
 
         if (app()->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../resources/lang' => lang_path('vendor/filament-astrotomic'),
+                __DIR__ . '/../resources/lang' => lang_path('vendor/filament-astrotomic'),
             ], 'filament-astrotomic-translations');
 
-            foreach (app(Filesystem::class)->files(__DIR__.'/../stubs/') as $file) {
+            foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
                 $this->publishes([
                     $file->getRealPath() => base_path("stubs/filament-astrotomic/{$file->getFilename()}"),
                 ], 'filament-astrotomic-stubs');
