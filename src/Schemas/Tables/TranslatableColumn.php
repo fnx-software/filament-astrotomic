@@ -2,10 +2,12 @@
 
 namespace Fnxsoftware\FilamentAstrotomic\Schemas\Tables;
 
+use Astrotomic\Translatable\Contracts\Translatable;
 use Closure;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
@@ -86,14 +88,14 @@ class TranslatableColumn extends TextColumn
                 $model = $query->getModel();
 
                 // This implementation supports single-level BelongsTo relationships.
-                if (! (method_exists($model, $relationshipPath) && $model->{$relationshipPath}() instanceof \Illuminate\Database\Eloquent\Relations\BelongsTo)) {
+                if (! (method_exists($model, $relationshipPath) && $model->{$relationshipPath}() instanceof BelongsTo)) {
                     return $query; // Silently fail if not a supported relationship
                 }
 
-                /** @var \Illuminate\Database\Eloquent\Relations\BelongsTo $relationship */
+                /** @var BelongsTo $relationship */
                 $relationship = $model->{$relationshipPath}();
 
-                /** @var Model&\Astrotomic\Translatable\Contracts\Translatable $relatedModel */
+                /** @var Model&Translatable $relatedModel */
                 $relatedModel = $relationship->getRelated();
 
                 $relatedTable = $relatedModel->getTable();
