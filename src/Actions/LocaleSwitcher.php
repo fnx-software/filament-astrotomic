@@ -17,7 +17,7 @@ class LocaleSwitcher extends SelectAction
     {
         parent::setUp();
 
-        $this->label(__('filament-spatie-laravel-translatable-plugin::actions.active_locale.label'));
+        $this->label(__('filament-astrotomic::actions.active_locale.label'));
 
         $this->setTranslatableLocaleOptions();
 

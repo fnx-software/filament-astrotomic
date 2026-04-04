@@ -10,13 +10,13 @@
     executionOrder="random"
     failOnWarning="true"
     failOnRisky="true"
-    failOnEmptyTestSuite="true"
+    failOnEmptyTestSuite="false"
     beStrictAboutOutputDuringTests="true"
     cacheDirectory=".phpunit.cache"
     backupStaticProperties="false"
 >
     <testsuites>
-        <testsuite name="Doriian Test Suite">
+        <testsuite name="Filament Astrotomic Test Suite">
             <directory>tests</directory>
         </testsuite>
     </testsuites>

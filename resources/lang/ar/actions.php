@@ -1,0 +1,7 @@
+<?php
+
+return [
+    'active_locale' => [
+        'label' => 'اللغة النشطة',
+    ],
+];

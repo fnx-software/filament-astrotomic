@@ -18,11 +18,6 @@ class FilamentAstrotomicServiceProvider extends PackageServiceProvider
 
     public function configurePackage(Package $package): void
     {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
         $package->name(static::$name)
             ->hasCommands($this->getCommands())
             ->hasInstallCommand(function (InstallCommand $command) {
@@ -36,23 +31,26 @@ class FilamentAstrotomicServiceProvider extends PackageServiceProvider
         if (file_exists($package->basePath("/../config/{$configFileName}.php"))) {
             $package->hasConfigFile();
         }
-
     }
 
     public function packageRegistered(): void {}
 
     public function packageBooted(): void
     {
-        // Handle Stubs
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'filament-astrotomic');
+
         if (app()->runningInConsole()) {
-            foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
+            $this->publishes([
+                __DIR__.'/../resources/lang' => lang_path('vendor/filament-astrotomic'),
+            ], 'filament-astrotomic-translations');
+
+            foreach (app(Filesystem::class)->files(__DIR__.'/../stubs/') as $file) {
                 $this->publishes([
                     $file->getRealPath() => base_path("stubs/filament-astrotomic/{$file->getFilename()}"),
                 ], 'filament-astrotomic-stubs');
             }
         }
 
-        // Testing
         Testable::mixin(new TestsFilamentAstrotomic);
     }
 

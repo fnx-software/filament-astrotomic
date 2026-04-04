@@ -23,6 +23,6 @@ trait HasLocales
         /** @var FilamentAstrotomicPlugin $plugin */
         $plugin = filament('filament-astrotomic');
 
-        return $plugin->allLocales();
+        return $plugin->getLocales();
     }
 }

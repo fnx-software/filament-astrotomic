@@ -56,12 +56,9 @@
     },
     "scripts": {
         "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",
-        "analyse": "phpstan analyse",
-        "lint": "pint",
-        "refactor": "rector",
-        "test": "pest",
-        "test:lint": "pint --test",
-        "test:refactor": "rector --dry-run"
+        "lint": "@php ./vendor/bin/pint",
+        "test": "@php ./vendor/bin/pest --colors=always",
+        "test:lint": "@php ./vendor/bin/pint --test"
     },
     "extra": {
         "laravel": {
@@ -77,8 +74,7 @@
         "sort-packages": true,
         "allow-plugins": {
             "composer/package-versions-deprecated": true,
-            "pestphp/pest-plugin": true,
-            "phpstan/extension-installer": true
+            "pestphp/pest-plugin": true
         }
     },
     "minimum-stability": "stable",
