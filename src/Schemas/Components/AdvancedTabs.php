@@ -9,6 +9,6 @@ use Fnxsoftware\FilamentAstrotomic\Schemas\Components\Concerns\HasHeaderActions;
 class AdvancedTabs extends Tabs implements HasAffixActions
 {
     use HasHeaderActions;
-    protected string $view = 'filament-astrotomic::schemas.components.advanced-tabs';
 
+    protected string $view = 'filament-astrotomic::schemas.components.advanced-tabs';
 }

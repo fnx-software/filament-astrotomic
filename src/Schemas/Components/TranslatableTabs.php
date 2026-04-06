@@ -40,29 +40,29 @@ class TranslatableTabs extends AdvancedTabs
 
     protected ?string $actionPickerName = null;
 
-    protected string|Htmlable|Closure|null $actionPickerLabel = null;
+    protected string | Htmlable | Closure | null $actionPickerLabel = null;
 
-    protected string|Closure|null $actionPickerIcon = null;
+    protected string | Closure | null $actionPickerIcon = null;
 
     protected bool $localePickerAsButton = false;
 
-    protected array|Closure|null|string $actionPickerColor = null;
+    protected array | Closure | null | string $actionPickerColor = null;
 
-    protected Closure|Htmlable|null|string $actionPickerModalHeading = null;
+    protected Closure | Htmlable | null | string $actionPickerModalHeading = null;
 
-    protected Closure|Htmlable|null|string $actionPickerModalDescription = null;
+    protected Closure | Htmlable | null | string $actionPickerModalDescription = null;
 
-    protected Closure|Htmlable|null|string $actionPickerModalSubmitActionLabel = null;
+    protected Closure | Htmlable | null | string $actionPickerModalSubmitActionLabel = null;
 
-    protected bool|Closure $hasSuffixLocalePicker = false;
+    protected bool | Closure $hasSuffixLocalePicker = false;
 
-    protected bool|Closure $hasPrefixLocalePicker = false;
+    protected bool | Closure $hasPrefixLocalePicker = false;
 
     protected ?array $cachedVisibleLocales = null;
 
     protected bool $isResolvingVisibleLocales = false;
 
-    public function hasSuffixLocalePicker(bool|Closure $condition = true): static
+    public function hasSuffixLocalePicker(bool | Closure $condition = true): static
     {
         $this->hasSuffixLocalePicker = $condition;
 
@@ -74,7 +74,7 @@ class TranslatableTabs extends AdvancedTabs
         return $this;
     }
 
-    public function hasPrefixLocalePicker(bool|Closure $condition = true): static
+    public function hasPrefixLocalePicker(bool | Closure $condition = true): static
     {
         $this->hasPrefixLocalePicker = $condition;
 
@@ -108,19 +108,19 @@ class TranslatableTabs extends AdvancedTabs
         return $this->evaluate($this->actionPickerName);
     }
 
-    public function actionPickerLabel(string|Htmlable|Closure|null $actionPickerLabel): static
+    public function actionPickerLabel(string | Htmlable | Closure | null $actionPickerLabel): static
     {
         $this->actionPickerLabel = $actionPickerLabel;
 
         return $this;
     }
 
-    public function getActionPickerLabel(): string|Htmlable|null
+    public function getActionPickerLabel(): string | Htmlable | null
     {
         return $this->evaluate($this->actionPickerLabel);
     }
 
-    public function actionPickerIcon(string|Closure|null $actionPickerIcon): static
+    public function actionPickerIcon(string | Closure | null $actionPickerIcon): static
     {
         $this->actionPickerIcon = $actionPickerIcon;
 
@@ -132,50 +132,50 @@ class TranslatableTabs extends AdvancedTabs
         return $this->evaluate($this->actionPickerIcon);
     }
 
-    public function actionPickerModalHeading(string|Htmlable|Closure|null $actionPickerModalHeading): static
+    public function actionPickerModalHeading(string | Htmlable | Closure | null $actionPickerModalHeading): static
     {
         $this->actionPickerModalHeading = $actionPickerModalHeading;
 
         return $this;
     }
 
-    public function getActionPickerModalHeading(): string|Htmlable|null
+    public function getActionPickerModalHeading(): string | Htmlable | null
     {
         return $this->evaluate($this->actionPickerModalHeading);
     }
 
-    public function actionPickerModalDescription(string|Htmlable|Closure|null $actionPickerModalDescription): static
+    public function actionPickerModalDescription(string | Htmlable | Closure | null $actionPickerModalDescription): static
     {
         $this->actionPickerModalDescription = $actionPickerModalDescription;
 
         return $this;
     }
 
-    public function getActionPickerModalDescription(): string|Htmlable|null
+    public function getActionPickerModalDescription(): string | Htmlable | null
     {
         return $this->evaluate($this->actionPickerModalDescription);
     }
 
-    public function actionPickerModalSubmitActionLabel(string|Htmlable|Closure|null $actionPickerModalSubmitActionLabel): static
+    public function actionPickerModalSubmitActionLabel(string | Htmlable | Closure | null $actionPickerModalSubmitActionLabel): static
     {
         $this->actionPickerModalSubmitActionLabel = $actionPickerModalSubmitActionLabel;
 
         return $this;
     }
 
-    public function getActionPickerModalSubmitActionLabel(): string|Htmlable|null
+    public function getActionPickerModalSubmitActionLabel(): string | Htmlable | null
     {
         return $this->evaluate($this->actionPickerModalSubmitActionLabel);
     }
 
-    public function actionPickerColor(string|Closure|null $actionPickerColor): static
+    public function actionPickerColor(string | Closure | null $actionPickerColor): static
     {
         $this->actionPickerColor = $actionPickerColor;
 
         return $this;
     }
 
-    public function getActionPickerColor(): string|array|null
+    public function getActionPickerColor(): string | array | null
     {
         return $this->evaluate($this->actionPickerColor);
     }
@@ -627,7 +627,7 @@ class TranslatableTabs extends AdvancedTabs
             ->replaceMatches('/[^A-Za-z0-9_]+/', '_')
             ->trim('_');
 
-        return 'astrotomic_visible_locales_'.$this->getLivewire()->getId().'_'.$normalizedKey;
+        return 'astrotomic_visible_locales_' . $this->getLivewire()->getId() . '_' . $normalizedKey;
     }
 
     protected function resolveActionPickerName(): string
@@ -645,19 +645,19 @@ class TranslatableTabs extends AdvancedTabs
             ?? 'translatable-tabs'
         );
 
-        return 'manage_locales_'.(string) Str::of($key)
+        return 'manage_locales_' . (string) Str::of($key)
             ->replaceMatches('/[^A-Za-z0-9_]+/', '_')
             ->trim('_');
     }
 
-    public function prependTabs(array|callable $tabs = []): self
+    public function prependTabs(array | callable $tabs = []): self
     {
         $this->prependTabs = $this->evaluate($tabs);
 
         return $this;
     }
 
-    public function customLocales(array|callable $locales = []): self
+    public function customLocales(array | callable $locales = []): self
     {
         $this->customLocales = $this->evaluate($locales);
 
@@ -666,7 +666,7 @@ class TranslatableTabs extends AdvancedTabs
         return $this;
     }
 
-    public function appendTabs(array|callable $tabs = []): self
+    public function appendTabs(array | callable $tabs = []): self
     {
         $this->appendTabs = $this->evaluate($tabs);
 
