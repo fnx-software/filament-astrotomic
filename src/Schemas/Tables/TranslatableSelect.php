@@ -1,81 +1,167 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Fnxsoftware\FilamentAstrotomic\Schemas\Tables;
 
 use Closure;
 use Filament\Forms\Components\Select;
+use Fnxsoftware\FilamentAstrotomic\Concerns\HasTranslatableRecordLabel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class TranslatableSelect extends Select
 {
-    /**
-     * Configures the component to work with an Astrotomic translatable relationship.
-     *
-     * @param  string  $name  The name of the relationship.
-     * @param  string  $titleAttribute  The attribute on the translation model to use as the option label.
-     * @param  Closure|null  $modifyQueryUsing  A closure to modify the query.
-     */
-    public function translatableRelationship(string $name, string $titleAttribute, ?Closure $modifyQueryUsing = null): static
-    {
-        // Set the relationship details for Filament's internal mechanics
-        $this->relationship($name, $titleAttribute, $modifyQueryUsing);
+    use HasTranslatableRecordLabel;
 
-        // Override the options logic to fetch translated options
-        $this->options(function () use ($titleAttribute, $modifyQueryUsing) {
-            $relationship = $this->getRelationship();
-            /** @var Builder $query */
-            $query = $relationship->getRelated()->query()->translatedIn(app()->getLocale());
+    protected ?string $translatableRelationshipName = null;
 
-            if ($modifyQueryUsing) {
-                $query = $this->evaluate($modifyQueryUsing, [
-                    'query' => $query,
-                ]);
-            }
+    protected ?string $translatableTitleAttribute = null;
 
-            return $query
-                ->get()
-                ->mapWithKeys(function (Model $record) use ($titleAttribute) {
-                    // Assuming the record has the Translatable trait
-                    $translatedValue = $record->translate(app()->getLocale())?->{$titleAttribute};
+    protected ?Closure $translatableModifyQueryUsing = null;
 
-                    return [$record->getKey() => $translatedValue];
-                });
-        });
+    public function translatableRelationship(
+        string $relationship,
+        string $titleAttribute,
+        ?Closure $modifyQueryUsing = null,
+    ): static {
+        $this->translatableRelationshipName = $relationship;
+        $this->translatableTitleAttribute = $titleAttribute;
+        $this->translatableModifyQueryUsing = $modifyQueryUsing;
 
-        // Override the search logic to search within translations
-        $this->getSearchResultsUsing(function (string $search) use ($titleAttribute, $modifyQueryUsing): array {
-            $relationship = $this->getRelationship();
-            /** @var Builder $query */
-            $query = $relationship->getRelated()->query();
+        /*
+         * Do not pass $titleAttribute to Filament's relationship().
+         *
+         * Filament's normal relationship titleAttribute must be a real column on
+         * the related table. Astrotomic translated attributes such as "name",
+         * "first_name", "last_name" live in the translation table, so passing
+         * them to relationship() causes SQL like:
+         *
+         * select hr_departments.name, hr_departments.id from hr_departments
+         *
+         * which fails because hr_departments.name does not exist.
+         */
+        $this->relationship(
+            name: $relationship,
+            modifyQueryUsing: $modifyQueryUsing,
+        );
 
-            if ($modifyQueryUsing) {
-                $query = $this->evaluate($modifyQueryUsing, [
-                    'query' => $query,
-                ]);
-            }
+        $this->options(fn (): array => $this->getTranslatableOptions());
 
-            // Apply the translation search constraint
-            $query->whereTranslationLike($titleAttribute, "%{$search}%", app()->getLocale());
+        $this->getSearchResultsUsing(
+            fn (string $search): array => $this->getTranslatableSearchResults($search),
+        );
 
-            return $query
-                ->limit(50)
-                ->get()
-                ->mapWithKeys(function (Model $record) use ($titleAttribute) {
-                    $translatedValue = $record->translate(app()->getLocale())?->{$titleAttribute};
+        $this->getOptionLabelUsing(
+            fn ($value): ?string => $this->getTranslatableOptionLabel($value),
+        );
 
-                    return [$record->getKey() => $translatedValue];
-                })
-                ->toArray();
-        });
-
-        // Override the logic to get the label for the currently selected option
-        $this->getOptionLabelUsing(function ($value) use ($titleAttribute): ?string {
-            $record = $this->getRelationship()->getRelated()->find($value);
-
-            return $record?->translate(app()->getLocale())?->{$titleAttribute};
-        });
+        $this->getOptionLabelFromRecordUsing(
+            fn (Model $record): ?string => $this->resolveTranslatableRecordLabel(
+                record: $record,
+                fallbackAttribute: $this->getTranslatableTitleAttribute(),
+            ),
+        );
 
         return $this;
+    }
+
+    public function getTranslatableRelationshipName(): ?string
+    {
+        return $this->translatableRelationshipName;
+    }
+
+    public function getTranslatableTitleAttribute(): string
+    {
+        return $this->translatableTitleAttribute ?? 'name';
+    }
+
+    protected function getTranslatableOptions(): array
+    {
+        $query = $this->getTranslatableRelatedQuery();
+
+        if (! $query) {
+            return [];
+        }
+
+        return $query
+            ->limit($this->getOptionsLimit())
+            ->get()
+            ->mapWithKeys(fn (Model $record): array => [
+                $record->getKey() => $this->resolveTranslatableRecordLabel(
+                    record: $record,
+                    fallbackAttribute: $this->getTranslatableTitleAttribute(),
+                ),
+            ])
+            ->all();
+    }
+
+    protected function getTranslatableSearchResults(string $search): array
+    {
+        $query = $this->getTranslatableRelatedQuery();
+
+        if (! $query) {
+            return [];
+        }
+
+        $this->applyTranslatableSearchAttributes(
+            query: $query,
+            search: $search,
+            fallbackAttribute: $this->getTranslatableTitleAttribute(),
+        );
+
+        return $query
+            ->limit($this->getOptionsLimit())
+            ->get()
+            ->mapWithKeys(fn (Model $record): array => [
+                $record->getKey() => $this->resolveTranslatableRecordLabel(
+                    record: $record,
+                    fallbackAttribute: $this->getTranslatableTitleAttribute(),
+                ),
+            ])
+            ->all();
+    }
+
+    protected function getTranslatableOptionLabel(mixed $value): ?string
+    {
+        if (blank($value)) {
+            return null;
+        }
+
+        $query = $this->getTranslatableRelatedQuery();
+
+        if (! $query) {
+            return null;
+        }
+
+        $record = $query->find($value);
+
+        return $this->resolveTranslatableRecordLabel(
+            record: $record,
+            fallbackAttribute: $this->getTranslatableTitleAttribute(),
+        );
+    }
+
+    protected function getTranslatableRelatedQuery(): ?Builder
+    {
+        $relationship = $this->getRelationship();
+
+        if (! $relationship instanceof Relation) {
+            return null;
+        }
+
+        $query = $relationship
+            ->getRelated()
+            ->newQuery()
+            ->with('translations');
+
+        if ($this->translatableModifyQueryUsing instanceof Closure) {
+            $query = $this->evaluate($this->translatableModifyQueryUsing, [
+                'query' => $query,
+            ]) ?? $query;
+        }
+
+        return $query;
     }
 }
