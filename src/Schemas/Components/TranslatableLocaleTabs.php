@@ -7,6 +7,4 @@ namespace Fnxsoftware\FilamentAstrotomic\Schemas\Components;
 /**
  * Alias for projects moving their application-specific native tabs into the package.
  */
-class TranslatableLocaleTabs extends LocaleAwareTranslatableTabs
-{
-}
+class TranslatableLocaleTabs extends LocaleAwareTranslatableTabs {}
