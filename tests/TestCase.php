@@ -9,13 +9,14 @@ use Filament\FilamentServiceProvider;
 use Filament\Panel;
 use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
 use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicServiceProvider;
+use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 abstract class TestCase extends OrchestraTestCase
 {
     protected function getPackageProviders($app): array
     {
-        return [FilamentServiceProvider::class, FilamentAstrotomicServiceProvider::class];
+        return [LivewireServiceProvider::class, FilamentServiceProvider::class, FilamentAstrotomicServiceProvider::class];
     }
 
     protected function setUp(): void
