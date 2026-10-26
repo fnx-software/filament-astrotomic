@@ -25,3 +25,17 @@ jobs:
           while IFS= read -r -d '' file; do
             php -l "$file"
           done < <(find src -name '*.php' -print0)
+
+  package-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, sqlite3, pdo_sqlite, intl, fileinfo
+          coverage: none
+      - name: Install package dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+      - name: Test locale tab visibility and custom schema
+        run: vendor/bin/pest tests/Feature/LocaleAwareTranslatableTabsTest.php
