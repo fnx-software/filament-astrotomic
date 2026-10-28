@@ -414,7 +414,7 @@ class TranslatableTabs extends AdvancedTabs
         if (method_exists($this, 'getLivewireProperty')) {
             $livewireProperty = $this->getLivewireProperty();
             if (filled($livewireProperty)) {
-                data_set($livewire, $livewireProperty, $tabToFocus);
+                data_set($this->getLivewire(), $livewireProperty, $tabToFocus);
             }
         }
     }

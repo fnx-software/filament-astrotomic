@@ -633,3 +633,8 @@ LocaleAwareTranslatableTabs::make('translations')
 The \`TranslatableLocaleTabs\` class is a compatibility alias for applications that used a local Filament 5 native-tabs workaround. Do not copy that application-level helper; use the package component directly.
 
 The legacy \`TranslatableTabs\` / \`AdvancedTabs\` APIs remain for existing integrations, but the native component is recommended for Filament 5 forms. Existing picker behavior is not automatically enabled by the native component; hiding languages here is configured per form rather than a destructive inline picker.
+
+
+### Release verification (maintainers)
+
+Before publishing a new stable tag, ensure GitHub Actions **Filament Astrotomic release checks** is green on the exact release commit for PHP 8.3 and 8.4. The workflow runs full Pest and Pint checks, not only native-tabs source lint. Manually validate forms with two locales and one locale, RTL, locale picker changes, create/edit translation persistence and the tab child fields. Always run Composer commands from the `filament-astrotomic` repository root, **not** an application that consumes the package. Tag only after checks and changelog approval.
