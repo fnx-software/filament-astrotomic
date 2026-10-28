@@ -4,33 +4,13 @@ declare(strict_types=1);
 
 namespace Fnxsoftware\FilamentAstrotomic\Tests;
 
-use Filament\Facades\Filament;
-use Filament\FilamentServiceProvider;
-use Filament\Panel;
-use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
 use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicServiceProvider;
-use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 abstract class TestCase extends OrchestraTestCase
 {
     protected function getPackageProviders($app): array
     {
-        return [LivewireServiceProvider::class, FilamentServiceProvider::class, FilamentAstrotomicServiceProvider::class];
-    }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        Filament::setCurrentPanel(
-            Panel::make()
-                ->id('testing')
-                ->plugin(
-                    FilamentAstrotomicPlugin::make()
-                        ->mainLocale('ar')
-                        ->locales(['ar', 'en', 'fr']),
-                ),
-        );
+        return [FilamentAstrotomicServiceProvider::class];
     }
 }
