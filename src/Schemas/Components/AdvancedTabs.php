@@ -10,5 +10,6 @@ class AdvancedTabs extends Tabs implements HasAffixActions
 {
     use HasHeaderActions;
 
-    protected string $view = 'filament-astrotomic::schemas.components.advanced-tabs';
+    // The inherited Filament Tabs view correctly renders ordinary locale fields.
+    // Custom header actions opt into the advanced view when needed.
 }
