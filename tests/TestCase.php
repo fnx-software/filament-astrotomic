@@ -23,6 +23,11 @@ abstract class TestCase extends OrchestraTestCase
     {
         parent::setUp();
 
+        // Livewire / Filament encrypt form state during rendering. This fixed
+        // test-only key is never used by consumer applications or production.
+        config()->set('app.key', 'base64:' . base64_encode(str_repeat('t', 32)));
+        config()->set('app.cipher', 'AES-256-CBC');
+
         // Astrotomic reads its own Laravel configuration, separately from
         // the locales exposed by the Filament panel plugin.
         config()->set('translatable.locales', ['ar', 'en', 'fr']);
