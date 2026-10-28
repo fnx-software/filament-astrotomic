@@ -16,3 +16,8 @@ it('renders the main translation field inside the Filament 5 native tab panel', 
         ->assertSet('data.ar.name', 'الاسم بالعربية')
         ->assertSet('data.en.name', 'English name');
 });
+
+it('loads configured Astrotomic locales in the standalone package test environment', function (): void {
+    expect(config('translatable.locales'))->toBe(['ar', 'en', 'fr'])
+        ->and(app(\Astrotomic\Translatable\Locales::class)->all())->toBe(['ar', 'en', 'fr']);
+});

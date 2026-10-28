@@ -23,6 +23,11 @@ abstract class TestCase extends OrchestraTestCase
     {
         parent::setUp();
 
+        // Astrotomic reads its own Laravel configuration, separately from
+        // the locales exposed by the Filament panel plugin.
+        config()->set('translatable.locales', ['ar', 'en', 'fr']);
+        config()->set('translatable.locale', 'ar');
+
         $this->app['view']->addNamespace('filament-astrotomic-tests', __DIR__ . '/views');
 
         Filament::setCurrentPanel(

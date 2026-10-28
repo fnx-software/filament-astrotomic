@@ -2,7 +2,7 @@
 
 All notable changes to `fnx-software/filament-astrotomic` will be documented in this file.
 
-## Unreleased — v2.2.0 candidate (2026-10-28)
+## Unreleased — post-v2.2.0 fixes (2026-10-28)
 
 ### Added
 - Centralized language tabs on the existing `TranslatableTabs` component; use `customLocales()`, `prependTabs()`, `appendTabs()` and the locale picker without a parallel translation-tabs API.
@@ -21,7 +21,8 @@ All notable changes to `fnx-software/filament-astrotomic` will be documented in 
 
 ### Release note
 - Removed two unreleased duplicate components (`LocaleAwareTranslatableTabs` and `TranslatableLocaleTabs`) before the v2.2.0 release candidate; neither existed in v2.1.0.
-- No version tag has been created. Complete manual bilingual Create/Edit/RTL/repeater/locale-picker QA, merge the preflight PR, and require passing CI on the final `main` SHA before tagging.
+- An earlier `v2.2.0` tag already exists on `main` before these corrections. It does **not** contain this preflight branch. Verify this work for a patch release instead of rewriting the published tag.
+- Complete bilingual Create/Edit/RTL/repeater/locale-picker QA and require passing CI on the final patch release commit before tagging.
 
 
 

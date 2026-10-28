@@ -26,3 +26,12 @@ GitHub Actions run 40685709752 passed both PHP 8.3 and 8.4 jobs. Composer depend
 ## Simplified public API (2026-10-28)
 
 Removed unreleased `LocaleAwareTranslatableTabs`, its `TranslatableLocaleTabs` alias and corresponding redundant tests. `TranslatableTabs` remains the single supported translation-tab component. All published v2.1.0 APIs are unchanged; the removed components did not exist in v2.1.0. RDMS PR #46 already uses `TranslatableTabs` and requires no code migration.
+
+
+## Testbench locale configuration correction
+
+The actual Livewire form test raised `LocalesNotDefinedException` because `Astrotomic\\Translatable\\Locales` reads `config('translatable.locales')`. Setting only `FilamentAstrotomicPlugin::locales()` does **not** initialize that configuration. `tests/TestCase.php` now configures the Astrotomic locale keys before registering the Filament test panel.
+
+## Published tag warning
+
+An annotated `v2.2.0` tag was pushed to commit `a5f243a` despite failing package tests. This preflight PR must not be represented as already included in that tag. Prefer a new patch release `v2.2.1` after successful verification; do not silently move an immutable public tag.
