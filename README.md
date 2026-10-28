@@ -579,57 +579,29 @@ Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
 
 
-## Filament 5 native locale tabs (recommended)
+## Filament 5 translation tabs
 
-For Filament 5, use `LocaleAwareTranslatableTabs`. It renders the **actual form fields** using Filament's native `Tabs`, not the older custom `AdvancedTabs` Blade renderer. It shows every configured locale by default, including those without an existing translation.
+Use a single **TranslatableTabs** component for all translated forms. It delegates tab content rendering to Filament 5 native embedded components, preserving the Astrotomic Create/Edit translation workflow.
 
 ```php
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Tabs\Tab;
-use Fnxsoftware\FilamentAstrotomic\Schemas\Components\LocaleAwareTranslatableTabs;
+use Fnxsoftware\FilamentAstrotomic\Schemas\Components\TranslatableTabs;
 use Fnxsoftware\FilamentAstrotomic\TranslatableTab;
 
-LocaleAwareTranslatableTabs::make('translations')
+TranslatableTabs::make('Translations')
+    ->customLocales(['en', 'ar'])
+    ->force()
     ->localeTabSchema(fn (TranslatableTab $tab): array => [
-        TextInput::make($tab->makeName('title'))
-            ->required($tab->isMainLocale()),
+        TextInput::make($tab->makeName('name'))
+            ->required($tab->isMainLocale())
+            ->maxLength(255),
     ]);
 ```
 
-To show Arabic and English only on a particular form (without deleting saved French data):
+Use `customLocales(['en', 'ar'])` to restrict a form's available languages without deleting existing translations in other locales. Use `prependTabs()` and `appendTabs()` for unrelated tabs. To allow the user to change which configured locales are shown, enable `hasSuffixLocalePicker()` or `hasPrefixLocalePicker()`. Locale visibility is a UI preference, not a translation deletion operation.
 
-```php
-LocaleAwareTranslatableTabs::make('translations')
-    ->visibleLocales(['ar', 'en'])
-    ->localeTabSchema(fn (TranslatableTab $tab): array => [
-        TextInput::make($tab->makeName('title')),
-    ]);
+The interim `LocaleAwareTranslatableTabs` and `TranslatableLocaleTabs` classes were added after v2.1.0 and removed **before the v2.2.0 release**. Their behavior was consolidated into the existing `TranslatableTabs` API; the unreleased `visibleLocales()` and `hideLocales()` helpers are not part of the public API. Consumers using an unreleased `dev-main` revision should migrate to `customLocales()` and the locale-picker methods.
 
-// Alternative: keep all other configured locales, but hide French.
-LocaleAwareTranslatableTabs::make('translations')
-    ->hideLocales(['fr'])
-    ->localeTabSchema(fn (TranslatableTab $tab): array => [
-        TextInput::make($tab->makeName('title')),
-    ]);
-```
+### Release verification (maintainers)
 
-Add non-translation tabs before or after the locale tabs:
-
-```php
-LocaleAwareTranslatableTabs::make('translations')
-    ->prependTabs([
-        Tab::make('General')->schema([/* regular fields */]),
-    ])
-    ->appendTabs([
-        Tab::make('SEO')->schema([/* SEO fields */]),
-    ])
-    ->localeTabSchema(fn (TranslatableTab $tab): array => [
-        TextInput::make($tab->makeName('title')),
-    ]);
-```
-
-`visibleLocales()` and `hideLocales()` also accept closures for per-tenant/page configuration. The main locale is always rendered so required fields remain accessible. **Hiding a locale is a display setting, never a command to delete its saved translation**. To remove a translation, implement an explicit authorized action with confirmation and audit logging.
-
-The `TranslatableLocaleTabs` class is a compatibility alias for applications that used a local Filament 5 native-tabs workaround. Do not copy that application-level helper; use the package component directly.
-
-The legacy `TranslatableTabs` / `AdvancedTabs` APIs remain for existing integrations, but the native component is recommended for Filament 5 forms. Existing picker behavior is not automatically enabled by the native component; hiding languages here is configured per form rather than a destructive inline picker.
+Before publishing a new stable tag, ensure GitHub Actions **Filament Astrotomic release checks** is green on the exact release commit for PHP 8.3 and 8.4. The workflow runs full Pest and Pint checks, not only native-tabs source lint. Manually validate forms with two locales and one locale, RTL, locale picker changes, create/edit translation persistence and the tab child fields. Always run Composer commands from the `filament-astrotomic` repository root, **not** an application that consumes the package. Tag only after checks and changelog approval.

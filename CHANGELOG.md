@@ -1,74 +1,31 @@
 # Changelog
 
-## v2.2.0 - Native Translatable Tabs for Filament 5 - 2026-10-28
-
-### ✨ What's New
-
-This release improves `TranslatableTabs` compatibility with Filament v5 by using Filament's native embedded tabs rendering system.
-
-Translation fields now render correctly inside language tabs, while preserving the existing Astrotomic translation workflow, locale picker functionality, and multilingual form support.
-
-#### Added
-
-* Added automated regression tests for native Filament 5 tabs rendering and multilingual Livewire form state.
-* Added a GitHub Actions testing matrix for PHP 8.3 and PHP 8.4, including Pest, Laravel Pint, and PHP syntax validation.
-* Added improved release verification coverage for translation components.
-
-#### Changed
-
-* Updated `TranslatableTabs` and `AdvancedTabs` to use Filament 5's native `toEmbeddedHtml()` rendering.
-* Prefix and suffix actions, including the locale picker, now appear in a dedicated toolbar above the tab headers.
-* Improved single-locale forms to display their fields directly without unnecessary tab navigation.
-* Consolidated translation tab functionality into the existing `TranslatableTabs` component instead of maintaining separate implementations.
-* Preserved support for `customLocales()`, `prependTabs()`, `appendTabs()`, and locale picker configuration.
-
-#### Fixed
-
-* Fixed translation tabs displaying without their form fields in Filament v5.
-* Fixed legacy Blade view dependencies that were incompatible with Filament 5.
-* Fixed the missing `filament-schemas::components.grid` view in single-locale layouts.
-* Fixed Livewire state handling when switching visible languages through the locale picker.
-* Fixed locale visibility changes potentially clearing draft translation state or removing existing translations.
-* Improved Testbench initialization for Filament and Livewire component testing.
-
-#### Example
-
-Configure English and Arabic translation tabs:
-
-```php
-use Filament\Forms\Components\TextInput;
-use Fnxsoftware\FilamentAstrotomic\Schemas\Components\TranslatableTabs;
-use Fnxsoftware\FilamentAstrotomic\TranslatableTab;
-
-TranslatableTabs::make('Translations')
-    ->customLocales(['en', 'ar'])
-    ->force()
-    ->hasSuffixLocalePicker()
-    ->localeTabSchema(fn (TranslatableTab $tab): array => [
-        TextInput::make($tab->makeName('name'))
-            ->label('Name')
-            ->required($tab->isMainLocale())
-            ->maxLength(255),
-    ]);
-
-```
-#### Notes
-
-* `TranslatableTabs` remains the primary component for multilingual forms.
-* The unreleased `LocaleAwareTranslatableTabs` and `TranslatableLocaleTabs` components were removed to avoid duplicate APIs. Neither was part of the published v2.1.0 release.
-* Existing Astrotomic translation models and database structures do not require migration for this update.
-* `TranslatableSelect`, `TranslatableColumn`, and `TranslatableEntry` remain unchanged by this release.
-
-**Full Changelog:** https://github.com/fnx-software/filament-astrotomic/compare/v2.1.0...v2.2.0
-
-## Unreleased — Fix Filament 5 translation tabs
-
-- Replaced legacy Blade-based tabs rendering with the inherited Filament 5 embedded Tabs renderer. Fixes tabs showing without their form fields.
-- Keeps Prefix/Suffix actions, including the locale picker, in a separate toolbar just above the native tab headers. This avoids depending on Filament's private tab markup.
-- Render a lone locale's form schema directly without the invalid `filament-schemas::components.grid` view, preserving single-locale layouts.
-- Adds package tests for native renderer selection and prevention of the two obsolete view overrides. Runtime/UI test verification still required before release.
-
 All notable changes to `fnx-software/filament-astrotomic` will be documented in this file.
+
+## Unreleased — post-v2.2.0 fixes (2026-10-28)
+
+### Added
+- Centralized language tabs on the existing `TranslatableTabs` component; use `customLocales()`, `prependTabs()`, `appendTabs()` and the locale picker without a parallel translation-tabs API.
+- Release CI matrix for PHP 8.3 and 8.4, running the entire Pest suite, Pint and PHP syntax validation.
+
+### Changed
+- `TranslatableTabs` and `AdvancedTabs` now render using native Filament 5 embedded components rather than a legacy Blade override.
+- Prefix/Suffix locale action controls render in a toolbar above the tab header instead of the old custom header markup.
+- A single-locale form renders its fields directly, without selecting the missing `filament-schemas::components.grid` view.
+
+### Fixed
+- Translation fields hidden by outdated tabs rendering.
+- Hiding a locale no longer deletes the underlying translated record or clears its draft form data.
+- Correctly target Livewire state when switching locales via the locale picker.
+- Testbench harness registers the Filament and Livewire providers before running locale-component tests.
+- Added SQLite-backed Livewire form persistence tests for creating EN/AR translations, editing one locale independently, and preserving hidden French translations.
+
+### Release note
+- Removed two unreleased duplicate components (`LocaleAwareTranslatableTabs` and `TranslatableLocaleTabs`) before the v2.2.0 release candidate; neither existed in v2.1.0.
+- An earlier `v2.2.0` tag already exists on `main` before these corrections. It does **not** contain this preflight branch. Verify this work for a patch release instead of rewriting the published tag.
+- Complete bilingual Create/Edit/RTL/repeater/locale-picker QA and require passing CI on the final patch release commit before tagging.
+
+
 
 ## v2.1.0 - Translatable Select Custom Labels - 2026-06-24
 
