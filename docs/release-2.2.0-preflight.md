@@ -16,3 +16,9 @@ composer test
 ```
 
 Manual integration: run RDMS PR #46 (after tagged v2.2.0 and composer.lock update).
+
+## CI verified on preflight branch
+
+GitHub Actions run 40685709752 passed both PHP 8.3 and 8.4 jobs. Composer dependency installation, PHP lint, Pint and the current Pest suite all passed on commit `ddb13966`.
+
+**Coverage limit:** the current Pest suite primarily checks component structure and locale visibility, not real browser Create/Edit tab panels or translation persistence. A passing CI run is necessary but not sufficient for a stable release. Run browser UAT on a consumer test app before tagging. The RDMS PR #46 remains blocked on a published stable v2.2.0.
