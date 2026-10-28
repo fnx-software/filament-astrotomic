@@ -1,13 +1,28 @@
 # Changelog
 
-## Unreleased — Fix Filament 5 translation tabs
-
-- Replaced legacy Blade-based tabs rendering with the inherited Filament 5 embedded Tabs renderer. Fixes tabs showing without their form fields.
-- Keeps Prefix/Suffix actions, including the locale picker, in a separate toolbar just above the native tab headers. This avoids depending on Filament's private tab markup.
-- Render a lone locale's form schema directly without the invalid `filament-schemas::components.grid` view, preserving single-locale layouts.
-- Adds package tests for native renderer selection and prevention of the two obsolete view overrides. Runtime/UI test verification still required before release.
-
 All notable changes to `fnx-software/filament-astrotomic` will be documented in this file.
+
+## Unreleased — v2.2.0 candidate (2026-10-28)
+
+### Added
+- `LocaleAwareTranslatableTabs` and `TranslatableLocaleTabs` for native Filament 5 translation tabs with explicit visible/hidden locales, leading and trailing tabs, and locale-aware field names.
+- Release CI matrix for PHP 8.3 and 8.4, running the entire Pest suite, Pint and PHP syntax validation.
+
+### Changed
+- `TranslatableTabs` and `AdvancedTabs` now render using native Filament 5 embedded components rather than a legacy Blade override.
+- Prefix/Suffix locale action controls render in a toolbar above the tab header instead of the old custom header markup.
+- A single-locale form renders its fields directly, without selecting the missing `filament-schemas::components.grid` view.
+
+### Fixed
+- Translation fields hidden by outdated tabs rendering.
+- Hiding a locale no longer deletes the underlying translated record or clears its draft form data.
+- Correctly target Livewire state when switching locales via the locale picker.
+- Testbench harness registers the Filament and Livewire providers before running locale-component tests.
+
+### Release note
+- No version tag has been created. Complete manual bilingual Create/Edit/RTL/repeater/locale-picker QA, merge the preflight PR, and require passing CI on the final `main` SHA before tagging.
+
+
 
 ## v2.1.0 - Translatable Select Custom Labels - 2026-06-24
 
