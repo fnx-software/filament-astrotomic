@@ -581,9 +581,9 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 
 ## Filament 5 native locale tabs (recommended)
 
-For Filament 5, use \`LocaleAwareTranslatableTabs\`. It renders the **actual form fields** using Filament's native \`Tabs\`, not the older custom \`AdvancedTabs\` Blade renderer. It shows every configured locale by default, including those without an existing translation.
+For Filament 5, use `LocaleAwareTranslatableTabs`. It renders the **actual form fields** using Filament's native `Tabs`, not the older custom `AdvancedTabs` Blade renderer. It shows every configured locale by default, including those without an existing translation.
 
-\`\`\`php
+```php
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Tabs\Tab;
 use Fnxsoftware\FilamentAstrotomic\Schemas\Components\LocaleAwareTranslatableTabs;
@@ -594,11 +594,11 @@ LocaleAwareTranslatableTabs::make('translations')
         TextInput::make($tab->makeName('title'))
             ->required($tab->isMainLocale()),
     ]);
-\`\`\`
+```
 
 To show Arabic and English only on a particular form (without deleting saved French data):
 
-\`\`\`php
+```php
 LocaleAwareTranslatableTabs::make('translations')
     ->visibleLocales(['ar', 'en'])
     ->localeTabSchema(fn (TranslatableTab $tab): array => [
@@ -611,11 +611,11 @@ LocaleAwareTranslatableTabs::make('translations')
     ->localeTabSchema(fn (TranslatableTab $tab): array => [
         TextInput::make($tab->makeName('title')),
     ]);
-\`\`\`
+```
 
 Add non-translation tabs before or after the locale tabs:
 
-\`\`\`php
+```php
 LocaleAwareTranslatableTabs::make('translations')
     ->prependTabs([
         Tab::make('General')->schema([/* regular fields */]),
@@ -626,10 +626,10 @@ LocaleAwareTranslatableTabs::make('translations')
     ->localeTabSchema(fn (TranslatableTab $tab): array => [
         TextInput::make($tab->makeName('title')),
     ]);
-\`\`\`
+```
 
-\`visibleLocales()\` and \`hideLocales()\` also accept closures for per-tenant/page configuration. The main locale is always rendered so required fields remain accessible. **Hiding a locale is a display setting, never a command to delete its saved translation**. To remove a translation, implement an explicit authorized action with confirmation and audit logging.
+`visibleLocales()` and `hideLocales()` also accept closures for per-tenant/page configuration. The main locale is always rendered so required fields remain accessible. **Hiding a locale is a display setting, never a command to delete its saved translation**. To remove a translation, implement an explicit authorized action with confirmation and audit logging.
 
-The \`TranslatableLocaleTabs\` class is a compatibility alias for applications that used a local Filament 5 native-tabs workaround. Do not copy that application-level helper; use the package component directly.
+The `TranslatableLocaleTabs` class is a compatibility alias for applications that used a local Filament 5 native-tabs workaround. Do not copy that application-level helper; use the package component directly.
 
-The legacy \`TranslatableTabs\` / \`AdvancedTabs\` APIs remain for existing integrations, but the native component is recommended for Filament 5 forms. Existing picker behavior is not automatically enabled by the native component; hiding languages here is configured per form rather than a destructive inline picker.
+The legacy `TranslatableTabs` / `AdvancedTabs` APIs remain for existing integrations, but the native component is recommended for Filament 5 forms. Existing picker behavior is not automatically enabled by the native component; hiding languages here is configured per form rather than a destructive inline picker.
