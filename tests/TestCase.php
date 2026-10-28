@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fnxsoftware\FilamentAstrotomic\Tests;
 
 use Filament\Facades\Filament;
+use Filament\FilamentServiceProvider;
 use Filament\Panel;
 use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
 use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicServiceProvider;
@@ -27,6 +28,6 @@ abstract class TestCase extends OrchestraTestCase
 
     protected function getPackageProviders($app): array
     {
-        return [FilamentAstrotomicServiceProvider::class];
+        return [FilamentServiceProvider::class, FilamentAstrotomicServiceProvider::class];
     }
 }
