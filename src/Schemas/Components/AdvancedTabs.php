@@ -41,11 +41,11 @@ class AdvancedTabs extends Tabs implements HasAffixActions
         // schema correctly. The affix actions form a toolbar above the tabs.
         // Do not switch back to the pre-Filament-5 Blade tabs template.
         return '<div class="fi-astrotomic-tabs">'
-            .'<div class="fi-astrotomic-tabs-actions flex items-center justify-between gap-2 pb-2">'
-            .'<div class="flex items-center gap-2">'.$prefixHtml.'</div>'
-            .'<div class="ms-auto flex items-center gap-2">'.$suffixHtml.'</div>'
-            .'</div>'
-            .parent::toEmbeddedHtml()
-            .'</div>';
+            . '<div class="fi-astrotomic-tabs-actions flex items-center justify-between gap-2 pb-2">'
+            . '<div class="flex items-center gap-2">' . $prefixHtml . '</div>'
+            . '<div class="ms-auto flex items-center gap-2">' . $suffixHtml . '</div>'
+            . '</div>'
+            . parent::toEmbeddedHtml()
+            . '</div>';
     }
 }

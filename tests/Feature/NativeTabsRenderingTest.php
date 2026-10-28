@@ -23,8 +23,8 @@ it('retains the embedded renderer when adding prefix and suffix actions', functi
 });
 
 it('never switches translated tab forms to unpublished Filament 5 Blade views', function (): void {
-    $tabs = file_get_contents(__DIR__.'/../../src/Schemas/Components/TranslatableTabs.php');
-    $actions = file_get_contents(__DIR__.'/../../src/Schemas/Components/Concerns/HasHeaderActions.php');
+    $tabs = file_get_contents(__DIR__ . '/../../src/Schemas/Components/TranslatableTabs.php');
+    $actions = file_get_contents(__DIR__ . '/../../src/Schemas/Components/Concerns/HasHeaderActions.php');
 
     expect($tabs)->not->toContain("->view('filament-schemas::components.grid')")
         ->and($actions)->not->toContain("->view('filament-astrotomic::schemas.components.advanced-tabs')")
