@@ -54,6 +54,7 @@ TranslatableSelect::make('person_id')
         'last_name',
     ]);
 
+
 ```
 #### Changed
 
@@ -67,6 +68,7 @@ TranslatableSelect::make('person_id')
 
 ```sql
 Unknown column 'related_table.name' in 'field list'
+
 
 ```
 This happened when translated attributes such as `name`, `first_name`, or `last_name` existed only in the translation table.
@@ -85,6 +87,7 @@ TranslatableSelect::make('department_id')
     )
     ->searchable()
     ->preload();
+
 
 ```
 #### Notes
@@ -124,12 +127,14 @@ Remove Debug code  (Mistake)
   
   
   
+  
     ```
   **Local Usage (in Form Schema):**
   
     ```php
     TranslatableTabs::make('translations')
   ->force() // Always show tabs for this component
+  
   
   
   
@@ -179,6 +184,7 @@ FilamentAstrotomicPlugin::make()
 
 
 
+
 ```
 **2) Custom locales for a specific form section (TranslatableTabs)**
 
@@ -189,6 +195,7 @@ TranslatableTabs::make()
         TextInput::make($tab->makeName('label'))
             ->required($tab->isMainLocale()),
     ]);
+
 
 
 
@@ -236,6 +243,7 @@ TranslatableTabs::make()
 
 
 
+
 ```
 #### 📝 Documentation Updates
 
@@ -247,6 +255,7 @@ To upgrade to the latest version, run the following Composer command in your pro
 
 ```bash
 composer update fnx-software/filament-astrotomic
+
 
 
 
@@ -307,6 +316,7 @@ public static function form(Form $form): Form
 
 
 
+
 ```
 This single line replaces complex custom logic, making your form code cleaner, more readable, and much easier to maintain. Enjoy the streamlined experience
 
@@ -349,6 +359,7 @@ TranslatableColumn::make('country.name')
 
 
 
+
 ```
 #### `TranslatableEntry` (Infolists)
 
@@ -362,6 +373,7 @@ use Fnxsoftware\FilamentAstrotomic\Infolists\Components\TranslatableEntry;
 // This now works seamlessly.
 TranslatableEntry::make('country.name')
     ->label('Country'),
+
 
 
 
@@ -425,6 +437,7 @@ use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
 
 
 
+
 ```
 **2. Set a dynamic locale using a Closure:**
 
@@ -437,6 +450,7 @@ use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
     FilamentAstrotomicPlugin::make()
         ->mainLocale(fn () => Setting::where('key', 'default_locale')->first()?->value ?? 'en')
 ])
+
 
 
 
@@ -488,6 +502,7 @@ protected function getHeaderActions(): array
 
 
 
+
 ```
 #### 2. `TranslatableColumn` for Tables
 
@@ -520,6 +535,7 @@ use Fnxsoftware\FilamentAstrotomic\Tables\Columns\TranslatableColumn;
 
 
 
+
 ```
 #### 3. `TranslatableEntry` for Infolists
 
@@ -533,6 +549,7 @@ use Fnxsoftware\FilamentAstrotomic\Infolists\Components\TranslatableEntry;
     TranslatableEntry::make('description'),
     // ...
 ])
+
 
 
 
