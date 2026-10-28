@@ -4,11 +4,17 @@ declare(strict_types=1);
 
 namespace Fnxsoftware\FilamentAstrotomic\Tests;
 
+use Filament\Actions\ActionsServiceProvider;
 use Filament\Facades\Filament;
 use Filament\FilamentServiceProvider;
+use Filament\Forms\FormsServiceProvider;
 use Filament\Panel;
+use Filament\Schemas\SchemasServiceProvider;
+use Filament\Support\SupportServiceProvider;
+use Filament\Tables\TablesServiceProvider;
 use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicPlugin;
 use Fnxsoftware\FilamentAstrotomic\FilamentAstrotomicServiceProvider;
+use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 abstract class TestCase extends OrchestraTestCase
@@ -28,6 +34,15 @@ abstract class TestCase extends OrchestraTestCase
 
     protected function getPackageProviders($app): array
     {
-        return [FilamentServiceProvider::class, FilamentAstrotomicServiceProvider::class];
+        return [
+            LivewireServiceProvider::class,
+            SupportServiceProvider::class,
+            SchemasServiceProvider::class,
+            FormsServiceProvider::class,
+            ActionsServiceProvider::class,
+            TablesServiceProvider::class,
+            FilamentServiceProvider::class,
+            FilamentAstrotomicServiceProvider::class,
+        ];
     }
 }
