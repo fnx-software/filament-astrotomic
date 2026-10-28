@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased — Fix Filament 5 translation tabs
+
+- Replaced legacy Blade-based tabs rendering with the inherited Filament 5 embedded Tabs renderer. Fixes tabs showing without their form fields.
+- Keeps Prefix/Suffix actions, including the locale picker, in a separate toolbar just above the native tab headers. This avoids depending on Filament's private tab markup.
+- Render a lone locale's form schema directly without the invalid `filament-schemas::components.grid` view, preserving single-locale layouts.
+- Adds package tests for native renderer selection and prevention of the two obsolete view overrides. Runtime/UI test verification still required before release.
+
 All notable changes to `fnx-software/filament-astrotomic` will be documented in this file.
 
 ## v2.1.0 - Translatable Select Custom Labels - 2026-06-24

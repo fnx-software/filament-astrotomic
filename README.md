@@ -206,6 +206,9 @@ class ViewPost extends ViewRecord
 
 ### `TranslatableTabs` for Localized Fields
 
+> **Filament 5 rendering:** `TranslatableTabs` uses the native embedded Tabs component. No custom `->view('filament-schemas::components.tabs')` call is needed or supported. If a locale picker or custom prefix/suffix action is enabled, its toolbar appears just above the tab headings. With exactly one locale and no extra tabs/actions, only the fields appear (without a redundant tab header).
+
+
 To manage translations for your model's attributes, use the `TranslatableTabs` component. It automatically creates a tab for each locale.
 
 ```php

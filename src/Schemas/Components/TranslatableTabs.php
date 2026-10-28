@@ -62,6 +62,8 @@ class TranslatableTabs extends AdvancedTabs
 
     protected bool $isResolvingVisibleLocales = false;
 
+    protected bool $shouldRenderSingleLocaleInline = false;
+
     public function hasSuffixLocalePicker(bool | Closure $condition = true): static
     {
         $this->hasSuffixLocalePicker = $condition;
@@ -210,6 +212,23 @@ class TranslatableTabs extends AdvancedTabs
         ]);
     }
 
+    public function toEmbeddedHtml(): string
+    {
+        // Resolve the generated locale tab before deciding how to render it.
+        // In Filament 5, Tabs and Tab use embedded HTML, not Blade views.
+        $tabs = $this->getChildSchema()->getComponents();
+
+        if ($this->shouldRenderSingleLocaleInline) {
+            $tab = reset($tabs);
+
+            if ($tab instanceof Tab) {
+                return $tab->getChildSchema()->toHtml();
+            }
+        }
+
+        return parent::toEmbeddedHtml();
+    }
+
     public function force(bool $condition = true): static
     {
         $this->isForced = $condition;
@@ -310,10 +329,13 @@ class TranslatableTabs extends AdvancedTabs
             || $this->isPrefixLocalePickerEnabled()
             || $this->isSuffixLocalePickerEnabled();
 
-        if ((count($localeCodes) === 1) && (! $shouldForce)) {
-            $locale = $localeCodes[0];
+        $this->shouldRenderSingleLocaleInline = (count($localeCodes) === 1)
+            && (! $shouldForce)
+            && blank($this->prependTabs)
+            && blank($this->appendTabs);
 
-            $this->view('filament-schemas::components.grid');
+        if ($this->shouldRenderSingleLocaleInline) {
+            $locale = $localeCodes[0];
 
             $tab = Tab::make($locale)
                 ->label($localeOptions[$locale]);
@@ -327,9 +349,7 @@ class TranslatableTabs extends AdvancedTabs
                 typedInjections: [TranslatableTab::class => $translatableTab],
             );
 
-            $this->schema($schema);
-
-            return [];
+            return [$tab->schema($schema)];
         }
 
         return collect($localeOptions)
