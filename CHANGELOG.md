@@ -5,7 +5,7 @@ All notable changes to `fnx-software/filament-astrotomic` will be documented in 
 ## Unreleased — v2.2.0 candidate (2026-10-28)
 
 ### Added
-- `LocaleAwareTranslatableTabs` and `TranslatableLocaleTabs` for native Filament 5 translation tabs with explicit visible/hidden locales, leading and trailing tabs, and locale-aware field names.
+- Centralized language tabs on the existing `TranslatableTabs` component; use `customLocales()`, `prependTabs()`, `appendTabs()` and the locale picker without a parallel translation-tabs API.
 - Release CI matrix for PHP 8.3 and 8.4, running the entire Pest suite, Pint and PHP syntax validation.
 
 ### Changed
@@ -20,6 +20,7 @@ All notable changes to `fnx-software/filament-astrotomic` will be documented in 
 - Testbench harness registers the Filament and Livewire providers before running locale-component tests.
 
 ### Release note
+- Removed two unreleased duplicate components (`LocaleAwareTranslatableTabs` and `TranslatableLocaleTabs`) before the v2.2.0 release candidate; neither existed in v2.1.0.
 - No version tag has been created. Complete manual bilingual Create/Edit/RTL/repeater/locale-picker QA, merge the preflight PR, and require passing CI on the final `main` SHA before tagging.
 
 

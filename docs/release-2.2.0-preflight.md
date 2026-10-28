@@ -1,7 +1,7 @@
 # v2.2.0 pre-release gate (no tag created)
 
 ## Review findings
-- Main contains Filament 5 embedded HTML tabs implementation and LocaleAwareTranslatableTabs.
+- Main initially contained the Filament 5 embedded HTML tab fix and an unreleased LocaleAwareTranslatableTabs workaround. The v2.2 preflight branch removes that duplicate before release.
 - The previous CI only ran on fix branches / pull requests and only executed the locale-aware test; this branch adds main and the full Pest suite + Pint on PHP 8.3/8.4.
 - Package Testbench bootstrap did not set the current Filament panel; LocaleAwareTranslatableTabs::getVisibleLocales() requires the plugin. This branch registers an in-memory panel with ar/en/fr test locales.
 - In TranslatableTabs::syncVisibleLocales(), the Livewire-property path referred to an undefined $livewire variable. It now obtains the actual livewire component when setting the property.
@@ -22,3 +22,7 @@ Manual integration: run RDMS PR #46 (after tagged v2.2.0 and composer.lock updat
 GitHub Actions run 40685709752 passed both PHP 8.3 and 8.4 jobs. Composer dependency installation, PHP lint, Pint and the current Pest suite all passed on commit `ddb13966`.
 
 **Coverage limit:** the current Pest suite primarily checks component structure and locale visibility, not real browser Create/Edit tab panels or translation persistence. A passing CI run is necessary but not sufficient for a stable release. Run browser UAT on a consumer test app before tagging. The RDMS PR #46 remains blocked on a published stable v2.2.0.
+
+## Simplified public API (2026-10-28)
+
+Removed unreleased `LocaleAwareTranslatableTabs`, its `TranslatableLocaleTabs` alias and corresponding redundant tests. `TranslatableTabs` remains the single supported translation-tab component. All published v2.1.0 APIs are unchanged; the removed components did not exist in v2.1.0. RDMS PR #46 already uses `TranslatableTabs` and requires no code migration.
