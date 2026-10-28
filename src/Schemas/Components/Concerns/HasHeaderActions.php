@@ -46,6 +46,7 @@ trait HasHeaderActions
         ];
 
         $this->cachedPrefixActions = null;
+        $this->view('filament-astrotomic::schemas.components.advanced-tabs');
 
         return $this;
     }
@@ -66,6 +67,7 @@ trait HasHeaderActions
         ];
 
         $this->cachedSuffixActions = null;
+        $this->view('filament-astrotomic::schemas.components.advanced-tabs');
 
         return $this;
     }
