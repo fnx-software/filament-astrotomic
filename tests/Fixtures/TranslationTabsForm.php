@@ -19,15 +19,37 @@ class TranslationTabsForm extends Component implements HasForms
 
     public ?array $data = [];
 
-    public function mount(): void
+    public ?int $postId = null;
+
+    public ?int $lastSavedPostId = null;
+
+    public function mount(?int $postId = null): void
     {
-        $this->form->fill();
+        $this->postId = $postId;
+
+        if ($postId === null) {
+            $this->form->fill();
+
+            return;
+        }
+
+        $post = TranslatedPost::query()->with('translations')->findOrFail($postId);
+
+        $attributes = ['slug' => $post->slug];
+
+        foreach ($post->translations as $translation) {
+            $attributes[$translation->locale] = ['name' => $translation->name];
+        }
+
+        $this->form->fill($attributes);
     }
 
     public function form(Schema $schema): Schema
     {
         return $schema
             ->components([
+                TextInput::make('slug')
+                    ->required(),
                 TranslatableTabs::make('Translations')
                     ->customLocales(['ar', 'en'])
                     ->force()
@@ -38,6 +60,21 @@ class TranslationTabsForm extends Component implements HasForms
                     ]),
             ])
             ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $state = $this->form->getState();
+
+        $post = $this->postId === null
+            ? new TranslatedPost
+            : TranslatedPost::query()->findOrFail($this->postId);
+
+        $post->fill($state);
+        $post->save();
+
+        $this->postId = $post->getKey();
+        $this->lastSavedPostId = $post->getKey();
     }
 
     public function render(): View

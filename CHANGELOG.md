@@ -18,6 +18,7 @@ All notable changes to `fnx-software/filament-astrotomic` will be documented in 
 - Hiding a locale no longer deletes the underlying translated record or clears its draft form data.
 - Correctly target Livewire state when switching locales via the locale picker.
 - Testbench harness registers the Filament and Livewire providers before running locale-component tests.
+- Added SQLite-backed Livewire form persistence tests for creating EN/AR translations, editing one locale independently, and preserving hidden French translations.
 
 ### Release note
 - Removed two unreleased duplicate components (`LocaleAwareTranslatableTabs` and `TranslatableLocaleTabs`) before the v2.2.0 release candidate; neither existed in v2.1.0.
