@@ -39,3 +39,19 @@ An annotated `v2.2.0` tag was pushed to commit `a5f243a` despite failing package
 ## SQLite persistence test gate
 
 The `tests/Feature/TranslatableTabsPersistenceTest.php` suite provisions an isolated SQLite in-memory schema and exercises the real `Astrotomic\\Translatable\\Translatable` Eloquent trait from the package's Filament Livewire form. It checks Create (EN+AR), Edit (AR only), and retention of an existing FR translation excluded from the form's `customLocales(['ar', 'en'])` configuration. The fixture is not an HTTP Filament Resource page, so final browser Create/Edit/locale picker/RTL UAT is still required.
+
+
+## Local persistence verification
+
+Run the isolated database-backed regression cases independently of the browser-based smoke checks:
+
+```bash
+composer test:lint
+vendor/bin/pest tests/Feature/TranslatableTabsPersistenceTest.php
+composer test
+composer validate --strict
+```
+
+The SQLite integration suite uses temporary in-memory tables for `TranslatedPost` and `TranslatedPostTranslation`, and checks actual rows written by Astrotomic when submitting the Filament Livewire form. It verifies independent AR/EN edits and preservation of a stored FR translation absent from the displayed locale tabs.
+
+This does not replace manual CreateRecord/EditRecord page and JS locale-picker/browser RTL UAT. Do not treat a successful state assertion as proof of database persistence without database row assertions.
