@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Astrotomic\Translatable\Locales;
 use Fnxsoftware\FilamentAstrotomic\Tests\Fixtures\TranslationTabsForm;
 use Livewire\Livewire;
 
@@ -19,5 +20,5 @@ it('renders the main translation field inside the Filament 5 native tab panel', 
 
 it('loads configured Astrotomic locales in the standalone package test environment', function (): void {
     expect(config('translatable.locales'))->toBe(['ar', 'en', 'fr'])
-        ->and(app(\Astrotomic\Translatable\Locales::class)->all())->toBe(['ar', 'en', 'fr']);
+        ->and(app(Locales::class)->all())->toBe(['ar', 'en', 'fr']);
 });
