@@ -23,7 +23,7 @@ abstract class TestCase extends OrchestraTestCase
     {
         parent::setUp();
 
-        $this->app['view']->addNamespace('filament-astrotomic-tests', __DIR__.'/views');
+        $this->app['view']->addNamespace('filament-astrotomic-tests', __DIR__ . '/views');
 
         Filament::setCurrentPanel(
             Panel::make()
