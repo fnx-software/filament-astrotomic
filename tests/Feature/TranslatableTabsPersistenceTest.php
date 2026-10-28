@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Filament\Facades\Filament;
 use Fnxsoftware\FilamentAstrotomic\Tests\Fixtures\TranslatedPost;
 use Fnxsoftware\FilamentAstrotomic\Tests\Fixtures\TranslationTabsForm;
 use Illuminate\Database\Schema\Blueprint;
