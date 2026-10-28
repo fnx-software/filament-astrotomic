@@ -393,43 +393,12 @@ class TranslatableTabs extends AdvancedTabs
         $newVisibleLocales = array_values(array_unique([$this->mainLocale, ...$selectedLocales]));
         $oldVisibleLocales = $this->getVisibleLocales();
 
-        $localesToRemove = array_diff($oldVisibleLocales, $newVisibleLocales);
         $localesToAdd = array_diff($newVisibleLocales, $oldVisibleLocales);
 
-        $livewire = $this->getLivewire();
-
-        $record = null;
-        if (method_exists($livewire, 'getRecord')) {
-            try {
-                $record = $livewire->getRecord();
-            } catch (Throwable $e) {
-            }
-        } elseif (property_exists($livewire, 'record')) {
-            $record = $livewire->record;
-        }
-
-        // Process removals
-        foreach ($localesToRemove as $locale) {
-            if ($locale === $this->mainLocale) {
-                continue;
-            } // Safety check
-
-            // 1. Unset data from Livewire state to clear the UI inputs
-            $dataPath = $this->getStatePath();
-            if (blank($dataPath)) {
-                $dataPath = 'data';
-            }
-            $currentData = data_get($livewire, $dataPath);
-            if (is_array($currentData) && array_key_exists($locale, $currentData)) {
-                unset($currentData[$locale]);
-                data_set($livewire, $dataPath, $currentData);
-            }
-
-            // 2. Delete the translation immediately from DB
-            if ($record && method_exists($record, 'deleteTranslation')) {
-                $record->deleteTranslation($locale);
-            }
-        }
+        // Visibility is a presentation preference, never a deletion command.
+        // Do not unset Livewire form state or delete an existing translation
+        // when a user unchecks a language. An explicit, authorized deletion
+        // workflow is required to remove translated content.
 
         // Save new visible configuration
         $this->cachedVisibleLocales = $newVisibleLocales;
@@ -483,7 +452,7 @@ class TranslatableTabs extends AdvancedTabs
 
             return $this->cachedVisibleLocales = $this->normalizeLocaleCodes([
                 $this->mainLocale,
-                ...$this->detectExistingLocales(),
+                ...$allowedLocales,
             ], $allowedLocales);
         } finally {
             $this->isResolvingVisibleLocales = false;
